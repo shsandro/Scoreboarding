@@ -1,8 +1,5 @@
 #include "clock.h"
 
-int clock;
-int finish_clock = 0;
-
 void init_clock(){
     clock = 0;
 }

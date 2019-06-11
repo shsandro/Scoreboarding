@@ -16,6 +16,7 @@ Register registers[32];
 /*Registradores PC e IR*/
 Register PC, IR;
 
+void initialize_registers();
 int read_register(int register);
 bool write_register(int data, int register);
 bool get_status(int register);

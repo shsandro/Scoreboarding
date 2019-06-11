@@ -1,9 +1,10 @@
-#include<stdio.h>
+#include"cpu.h"
 #include "registers.h"
 
-int fetch_stage(){
+/*Busca próxima instrução e marmazena em IR*/
+void fetch_stage(){
     IR.data = mem_read(PC.data);
-    PC.data += 4; //Desloca uma posição de PC  
+    PC.data += 4;  
 }
 
 void decode_stage(){

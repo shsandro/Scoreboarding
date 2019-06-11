@@ -1,5 +1,13 @@
 #include "registers.h"
 
+/*Inicializa registradores*/
+void initialize_registers(){
+    for(int i = 0; i < 32; ++i){
+        registers[i].data = 0;
+        registers[i].busy = false;
+  }
+}
+
 /*Lê a informação contida em um registrador*/
 int read_register(int index){
     return registers[index].data;
