@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include<stdbool.h>
 
 /*Estrutura do registrador  */
 typedef struct{
@@ -10,7 +11,7 @@ typedef struct{
     int data;
 }Register;
 
-/*Banco de regisstradores MIPS32*/
+/*Banco de registradores MIPS32*/
 Register registers[32];
 /*Registradores PC e IR*/
 Register PC, IR;

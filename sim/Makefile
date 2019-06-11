@@ -1,2 +1,2 @@
 C:
-	gcc sim.c memory.c
+	gcc sim.c memory.c registers.c
