@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include<stdbool.h>
+#include <stdbool.h>
+
+#define CLOCK_COUNT 9 /*Registrador que armazena os ciclos de clock*/
 
 /*Estrutura do registrador  */
 typedef struct{

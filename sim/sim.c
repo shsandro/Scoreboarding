@@ -1,4 +1,5 @@
 #include "memory.h"
+#include "registers.h"
 
 int num_instructions;
 

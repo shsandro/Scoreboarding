@@ -1,11 +1,13 @@
 #include "registers.h"
+#include "clock.h"
 
 /*Inicializa registradores*/
 void initialize_registers(){
     for(int i = 0; i < 32; ++i){
         registers[i].data = 0;
         registers[i].busy = false;
-  }
+    }
+    write_register(clock, CLOCK_COUNT);/*Escreve o valor de clock no regitrador 9*/
 }
 
 /*Lê a informação contida em um registrador*/

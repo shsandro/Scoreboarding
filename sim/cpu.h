@@ -4,6 +4,6 @@
 #include <stdio.h>
 
 void fetch_stage();
-void decode_stage()
+void decode_stage();
 
 #endif
