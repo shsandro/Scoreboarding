@@ -10,9 +10,14 @@ typedef struct{
     int data;
 }Register;
 
-Register registradores[32];
+/*Banco de regisstradores MIPS32*/
+Register registers[32];
+/*Registradores PC e IR*/
 Register PC, IR;
 
-
+int read_register(int register);
+bool write_register(int data, int register);
+bool get_status(int register);
+int set_status(int register);
 
 #endif
