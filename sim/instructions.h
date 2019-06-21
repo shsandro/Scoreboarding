@@ -1,6 +1,8 @@
 #ifndef INSTRUCTIONS_H
 #define INSTRUCTIONS_H
 
+#include <stdbool.h>
+
 /*Máscaras*/
 #define MASK_TYPE 63
 #define MASK_REGISTER 31
@@ -55,7 +57,6 @@
 
 /*Para instruções dos tipos SPECIAL e SPECIAL2*/
 typedef struct{
-    int opcode;
     int rs, rt, rd;
     int shamt;
     int funct;
@@ -63,14 +64,12 @@ typedef struct{
 
 /*Para instruções do tipo imediata*/
 typedef struct{
-    int opcode;
     int rs, rt;
     int immediate;
 }I_Instruction;
 
 /*Para instruções do tipo REGIMM*/
 typedef struct{
-    int opcode;
     int rs;
     int funct;
     int offset;
@@ -78,8 +77,17 @@ typedef struct{
 
 /*Para instruções do tipo J*/
 typedef struct{
-    int opcode;
     int target;
 }J_Instruction;
+
+/*Instrução geral para ser adicionada na fila*/
+typedef struct{
+    int opcode;
+    bool status;
+    R_Instruction r_instruction;
+    I_Instruction i_instruction;
+    REGIMM_Instruction regimm_instruction;
+    J_Instruction j_instruction;
+}Instruction;
 
 #endif
