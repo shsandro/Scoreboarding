@@ -1,12 +1,13 @@
 #ifndef CLOCK_H
 #define CLOCK_H
+
 #include <stdio.h>
 
 int clock;
-int finish_clock = 0;
+int finish_clock;
 
 void init_clock();
 void increase_clock();
-void finish_clock();
+void end_clock();
 
 #endif

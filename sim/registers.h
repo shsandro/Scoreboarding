@@ -5,7 +5,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define CLOCK_COUNT 9 /*Registrador que armazena os ciclos de clock*/
+#define HIGH 32
+#define LOW 33
 
 /*Estrutura do registrador  */
 typedef struct{
@@ -14,7 +15,7 @@ typedef struct{
 }Register;
 
 /*Banco de registradores MIPS32*/
-Register registers[32];
+Register registers[34]; /*Registrador zero sempre armazena o valor 0*/
 /*Registradores PC e IR*/
 Register PC, IR;
 

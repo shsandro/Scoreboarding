@@ -3,6 +3,7 @@
 
 void init_clock(){
     clock = 0;
+    finish_clock = 0;
 }
 
 void increase_clock(){

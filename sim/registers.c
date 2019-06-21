@@ -3,11 +3,11 @@
 
 /*Inicializa registradores*/
 void initialize_registers(){
-    for(int i = 0; i < 32; ++i){
+    for(int i = 0; i < 34; ++i){
         registers[i].data = 0;
         registers[i].busy = false;
     }
-    write_register(clock, CLOCK_COUNT);/*Escreve o valor de clock no regitrador 9*/
+    registers[0].busy = true;
 }
 
 /*Lê a informação contida em um registrador*/
@@ -17,12 +17,15 @@ int read_register(int index){
 
 /*Escreve um dado, instrução,... em um registrador*/
 bool write_register(int data, int index){
-    if(!get_status(index)){
+    if(index == 0){
+        return false; // registrador zero não pode ser escrito
+    }else if(!get_status(index)){
         registers[index].data = data;
         set_status(index);
         return true;
     }
-    return false;
+    registers[index].data = data;
+    return true;
 }
 
 /*Obtém o status de um registrador*/
