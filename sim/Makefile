@@ -1,2 +1,2 @@
 C:
-	gcc sim.c memory.c registers.c clock.c cpu.c
+	gcc sim.c memory.c registers.c clock.c cpu.c ./scoreboarding/ula.c

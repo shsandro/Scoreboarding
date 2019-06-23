@@ -83,7 +83,7 @@ typedef struct{
 /*Instrução geral para ser adicionada na fila*/
 typedef struct{
     int opcode;
-    bool status;
+    int stage;
     R_Instruction r_instruction;
     I_Instruction i_instruction;
     REGIMM_Instruction regimm_instruction;

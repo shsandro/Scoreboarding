@@ -7,11 +7,13 @@
 
 #define HIGH 32
 #define LOW 33
+#define NONE -1
 
 /*Estrutura do registrador  */
 typedef struct{
     bool busy;
     int data;
+    int fu; //unidade funcional que produzirá o resultado do registrador
 }Register;
 
 /*Banco de registradores MIPS32*/

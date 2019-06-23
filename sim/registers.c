@@ -6,8 +6,9 @@ void initialize_registers(){
     for(int i = 0; i < 34; ++i){
         registers[i].data = 0;
         registers[i].busy = false;
+        registers[i].fu = NONE;
     }
-    registers[0].busy = true;
+    registers[0].busy = true; //registrador 0 ocupado
 }
 
 /*Lê a informação contida em um registrador*/
