@@ -13,6 +13,12 @@
 #define EXECUTION 3
 #define WRITE_RESULT 4
 
+/*tipos de unidades funcionais*/
+#define MUL 0
+#define DIV 1
+#define ADD 2
+#define SUB 3
+
 /*id/posição das unidades funcionais*/
 #define UF_MUL1 0
 #define UF_MUL2 1
