@@ -1,5 +1,7 @@
 #include "scoreboarding.h"
 
+int ISSUED = false;
+
 int get_functional_unit(int operation){
     switch (operation) {
         case I_MUL:

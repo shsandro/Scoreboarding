@@ -1,8 +1,7 @@
-#include "memory.h"
-#include "registers.h"
-#include "cpu.h"
+#include "sim.h"
 
-int num_instructions;
+int num_instructions = 0;
+int finish_PC = 0;
 
 /*Cria arquivo inicial para teste de memória*/
 void init(FILE* arq){
@@ -14,6 +13,7 @@ void init(FILE* arq){
    fwrite(&a, sizeof(int), 1, arq);
    fseek(arq, 0, SEEK_SET);
    num_instructions = 4;
+   finish_PC = num_instructions*4;
 }
 
 int main(int argc, char **argv){
@@ -21,8 +21,9 @@ int main(int argc, char **argv){
    instructions = fopen("instructions.txt", "wr+");
    init(instructions);
    load_memory(instructions, num_instructions);
+   initialize_queue();
    //printf("%u\n%u\n%u\n", read_mem(0), read_mem(4), read_mem(8));
-   for(int i = 0; i<4; ++i){
+   for(int i = 0; i<1; ++i){
       fetch_stage();
       execution_stage();
    }

@@ -1,19 +1,25 @@
 #include"cpu.h"
-#include "registers.h"
-#include "memory.h"
-#include "./scoreboarding/scoreboarding.h"
 
 typedef struct{
     unsigned x: 6; // 10 bits
 }Opcode;
 
-/*Busca próxima instrução e marmazena em IR*/
+/*Busca próxima instrução, marmazena em IR e coloca na fila de instruções*/
 void fetch_stage(){
-    IR.data = read_mem(PC.data);
-    PC.data += 4;
+    if (get_status_queue() == EMPTY){
+        int instructions_fetched = 0;
+        while(instructions_fetched < 4 && PC.data < finish_PC) {
+            IR.data = read_mem(PC.data);
+            insert_instruction(IR.data);
+            PC.data += 4;
+            ++instructions_fetched;
+        }
+    }
 }
 
 void execution_stage(){
-    Instruction *instruction = (Instruction*)malloc(sizeof(Instruction));
-    scoreboarding(instruction, IR.data);
+    if (get_status_queue() == NOT_EMPTY){
+        //Instruction *instruction = (Instruction*)malloc(sizeof(Instruction));
+        scoreboarding();
+    }
 }
