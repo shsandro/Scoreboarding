@@ -13,7 +13,7 @@ void initialize_registers(){
 
 /*Lê a informação contida em um registrador*/
 int read_register(int index){
-    return registers[index].data;
+    return (index == NONE)? 0 : registers[index].data;
 }
 
 /*Escreve um dado, instrução,... em um registrador*/

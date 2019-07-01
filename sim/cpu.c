@@ -1,9 +1,5 @@
 #include"cpu.h"
 
-typedef struct{
-    unsigned x: 6; // 10 bits
-}Opcode;
-
 /*Busca próxima instrução, marmazena em IR e coloca na fila de instruções*/
 void fetch_stage(){
     if (get_status_queue() == EMPTY){
@@ -19,7 +15,6 @@ void fetch_stage(){
 
 void execution_stage(){
     if (get_status_queue() == NOT_EMPTY){
-        //Instruction *instruction = (Instruction*)malloc(sizeof(Instruction));
         scoreboarding();
     }
 }

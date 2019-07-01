@@ -4,6 +4,7 @@
 #include "memory.h"
 #include "registers.h"
 #include "cpu.h"
+#include "./scoreboarding/ula.h"
 #include "instructions_queue.h"
 
 extern int num_instructions;

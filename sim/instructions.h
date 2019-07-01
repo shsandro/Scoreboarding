@@ -84,6 +84,7 @@ typedef struct{
 typedef struct{
     int opcode;
     int stage;
+    int functional_unit;
     R_Instruction r_instruction;
     I_Instruction i_instruction;
     REGIMM_Instruction regimm_instruction;

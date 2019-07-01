@@ -10,7 +10,7 @@
 
 typedef struct{
     int* instructions_queue;
-    int num_instructions;
+    int num_instructions, begin, end;
     int max_instructions; //número máximo de instruções a serem buscadas é 4
 }Queue;
 
