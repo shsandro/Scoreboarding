@@ -1,13 +1,18 @@
 #include "memory.h"
+int num_instructions;
+int finish_PC;
 
 /*Carrega todas as instruções à memória*/
-void load_memory(FILE* instructions, int num_instructions){
+void load_memory(FILE* instructions){
     memory.vector = (Byte*) malloc(MEMORY_SIZE * sizeof(Byte));
     int word, address = 0;
-    for(int i = 0; i < num_instructions; i++){
-        fread(&word, sizeof(int), 1, instructions);
+    while(fread(&word, sizeof(int), 1, instructions) == 1){
         address = write_mem(word, address);
+        printf("Palavra: %d\n",word);
+        printf("Num instru: %d\n",num_instructions);
+        num_instructions++;
     }
+    finish_PC = num_instructions*4;
 }
 
 /*Escreve uma palavra em um edereço específico da memória*/

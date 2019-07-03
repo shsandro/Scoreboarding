@@ -13,15 +13,15 @@ void init(FILE* arq){
    fwrite(&z, sizeof(int), 1, arq);
    fwrite(&a, sizeof(int), 1, arq);
    fseek(arq, 0, SEEK_SET);
-   num_instructions = 5;
-   finish_PC = num_instructions*4;
+   // num_instructions = 5;
+   // finish_PC = num_instructions*4;
 }
 
 int main(int argc, char **argv){
    FILE* instructions;
    instructions = fopen("instructions.txt", "wr+");
    init(instructions);
-   load_memory(instructions, num_instructions);
+   load_memory(instructions);
    initialize_registers();
    initialize_queue();
    initialize_functional_units();

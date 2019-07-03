@@ -9,6 +9,8 @@
 
 typedef unsigned char Byte;
 typedef unsigned int Word;
+extern int num_instructions;
+extern int finish_PC;
 
 /*Definição da estrutura de memória*/
 typedef struct{
@@ -19,7 +21,7 @@ typedef struct{
 Memory memory;
 
 /*Assinatura das funções de memória*/
-void load_memory(FILE* instructions, int num_instructions);
+void load_memory(FILE* instructions);
 int write_mem(Word w, int address);
 void next_mem();
 Word read_mem(int address);
