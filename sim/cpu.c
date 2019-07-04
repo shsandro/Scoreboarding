@@ -14,7 +14,7 @@ void fetch_stage(){
 }
 
 void execution_stage(){
-    if (get_status_queue() == NOT_EMPTY){
+    if (get_status_queue() == NOT_EMPTY || get_status_list() == NOT_EMPTY){
         scoreboarding();
     }
 }

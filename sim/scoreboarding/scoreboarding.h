@@ -6,6 +6,7 @@
 #include "../clock.h"
 #include "ula.h"
 #include "../instructions_queue.h"
+#include "scoreboarding_list.h"
 #include <stdbool.h>
 
 /*Estágios do scoreboarding*/
@@ -13,6 +14,8 @@
 #define READ_OPERANDS 2
 #define EXECUTION 3
 #define WRITE_BACK 4
+
+#define UNAVAILABLE -1
 
 #define PC_BUFFER 34 //buffer para PC
 
