@@ -33,6 +33,7 @@ void scoreboarding(){
         int instruction_type = (data >> 26) & MASK_TYPE;
         instruction->opcode = instruction_type;
         instruction->stage = ISSUE;
+        instruction->execution_begin = NONE;
         int functional_unit;
 
         switch (instruction_type) {
@@ -663,11 +664,13 @@ void read_operands(Instruction* instruction){
 }
 
 void execute(Instruction* instruction){
+    if (instruction->execution_begin == NONE) instruction->execution_begin = get_clock();
     switch (instruction->opcode){
         case SPECIAL:
             switch (instruction->r_instruction.funct){
                 case I_ADD:
                 {
+                    if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -675,6 +678,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_AND:
                 {
+                    if (get_clock() != (instruction->execution_begin + AND_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_AND, operand_1, operand_2);
@@ -682,6 +686,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_DIV:
                 {
+                    if (get_clock() != (instruction->execution_begin + DIV_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = div_unit(OP_DIV, operand_1, operand_2);
@@ -690,6 +695,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_JR:
                 {
+                    if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -697,6 +703,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MFHI:
                 {
+                    if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -704,6 +711,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MFLO:
                 {
+                    if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -712,6 +720,7 @@ void execute(Instruction* instruction){
                 case I_MOVN:
                 {
                     if (read_register(functional_units[instruction->functional_unit].Fk) != 0){
+                        if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                         int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                         functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, 0);
                     } else functional_units[instruction->functional_unit].result[0] = read_register(functional_units[instruction->functional_unit].Fi);
@@ -720,6 +729,7 @@ void execute(Instruction* instruction){
                 case I_MOVZ:
                 {
                     if (read_register(functional_units[instruction->functional_unit].Fk) == 0){
+                        if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                         int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                         int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                         functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -728,6 +738,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MTHI:
                 {
+                    if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -735,6 +746,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MTLO:
                 {
+                    if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
@@ -742,6 +754,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MULT:
                 {
+                    if (get_clock() != (instruction->execution_begin + MUL_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = mul_unit(operand_1, operand_2) >> 16;
@@ -750,6 +763,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_NOP:
                 {
+                    if (get_clock() != (instruction->execution_begin + 1)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_SL, operand_1, operand_2);
@@ -757,6 +771,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_NOR:
                 {
+                    if (get_clock() != (instruction->execution_begin + NOR_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_NOR, operand_1, operand_2);
@@ -764,6 +779,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_OR:
                 {
+                    if (get_clock() != (instruction->execution_begin + OR_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_OR, operand_1, operand_2);
@@ -771,6 +787,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_SUB:
                 {
+                    if (get_clock() != (instruction->execution_begin + SUB_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = sub_unit(operand_1, operand_2);
@@ -778,6 +795,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_XOR:
                 {
+                    if (get_clock() != (instruction->execution_begin + XOR_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_XOR, operand_1, operand_2);
@@ -789,6 +807,7 @@ void execute(Instruction* instruction){
             switch (instruction->r_instruction.funct) {
                 case I_MADD:
                 {
+                    if (get_clock() != (instruction->execution_begin + MUL_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, (mul_unit(operand_1, operand_2) >> 16), operand_1);
@@ -797,6 +816,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MSUB:
                 {
+                    if (get_clock() != (instruction->execution_begin + MUL_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = sub_unit((mul_unit(operand_1, operand_2) >> 16), operand_1);
@@ -805,6 +825,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_MUL:
                 {
+                    if (get_clock() != (instruction->execution_begin + MUL_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = mul_unit(operand_1, operand_2);
@@ -816,27 +837,32 @@ void execute(Instruction* instruction){
             switch (instruction->regimm_instruction.funct) {
                 case I_BGEZ:
                     if (read_register(functional_units[instruction->functional_unit].Fj) >= 0){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
                     } else functional_units[instruction->functional_unit].result[0] = PC.data;
                 case I_BLTZ:
                     if (read_register(functional_units[instruction->functional_unit].Fj) < 0){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
                     } else functional_units[instruction->functional_unit].result[0] = PC.data;
             }
             break;
         case J:
+            if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
             functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->j_instruction.target, 0);
             break;
         default:
             switch (instruction->opcode) {
                 case I_ADDI:
                 {
+                    if (get_clock() != (instruction->execution_begin + ADD_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, instruction->i_instruction.immediate);
                 }    
                 break;
                 case I_ANDI:
                 {
+                    if (get_clock() != (instruction->execution_begin + AND_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_AND, operand_1, instruction->i_instruction.immediate);
                 }    
@@ -845,25 +871,31 @@ void execute(Instruction* instruction){
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    if (operand_1 == operand_2) functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (operand_1 == operand_2){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
                 }    
                 break;
                 case I_BEQL:
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    if (operand_1 == operand_2) functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (operand_1 == operand_2){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
                 }    
                 break;
                 case I_BGTZ:
                      if (read_register(functional_units[instruction->functional_unit].Fj) > 0){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
                     } else functional_units[instruction->functional_unit].result[0] = PC.data;
                     break;
                 case I_BLEZ:
                     if (read_register(functional_units[instruction->functional_unit].Fj) <= 0){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
                     } else functional_units[instruction->functional_unit].result[0] = PC.data;
                     break;
@@ -871,21 +903,26 @@ void execute(Instruction* instruction){
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    if (operand_1 != operand_2) functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (operand_1 != operand_2){
+                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
                 }    
                 break;
                 case I_LUI:
+                    if (get_clock() != (instruction->execution_begin + SL_CYCLES)) return;
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_SL, instruction->i_instruction.immediate, 16);
                     break;
                 case I_ORI:
                 {
+                    if (get_clock() != (instruction->execution_begin + OR_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_OR, operand_1, instruction->i_instruction.immediate);
                 }    
                 break;
                 case I_XORI:
                 {
+                    if (get_clock() != (instruction->execution_begin + XOR_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     functional_units[instruction->functional_unit].result[0] = add_unit(OP_XOR, operand_1, instruction->i_instruction.immediate);
                 }   
@@ -914,7 +951,8 @@ void write_back(Instruction* instruction){
                     registers[HIGH].fu = NONE;
                     break;
                 default:
-                    registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
+                    if (functional_units[instruction->functional_unit].Fi == PC_BUFFER) PC.data = functional_units[instruction->functional_unit].result[0];
+                    else registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
                     if (functional_units[instruction->functional_unit].Fi != PC_BUFFER){
                         int dest_register = functional_units[instruction->functional_unit].Fi;
                         registers[dest_register].fu = NONE;
@@ -928,7 +966,8 @@ void write_back(Instruction* instruction){
             registers[HIGH].fu = NONE;
             break;
         default:
-            registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
+            if (functional_units[instruction->functional_unit].Fi == PC_BUFFER) PC.data = functional_units[instruction->functional_unit].result[0];
+            else registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
             if (functional_units[instruction->functional_unit].Fi != PC_BUFFER){
                 int dest_register = functional_units[instruction->functional_unit].Fi;
                 registers[dest_register].fu = NONE;

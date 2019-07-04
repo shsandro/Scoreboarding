@@ -34,6 +34,19 @@
 #define OP_DIV 8
 #define OP_MOD 9
 
+/*Qauntidade de ciclos para cada operação*/
+#define BRANCH_CYCLES 1
+#define ADD_CYCLES 10
+#define SUB_CYCLES 10
+#define AND_CYCLES 2
+#define OR_CYCLES 2
+#define NOR_CYCLES 2
+#define XOR_CYCLES 2
+#define SL_CYCLES 1
+#define MUL_CYCLES 40
+#define DIV_CYCLES 40
+#define MOD_CYCLES 40
+
 typedef struct{
     bool busy;
     int operation;

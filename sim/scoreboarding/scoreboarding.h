@@ -19,7 +19,7 @@
 
 #define PC_BUFFER 34 //buffer para PC
 
-Register registers_buffer[35]; //o buffer de PC está incluído aqui
+Register registers_buffer[34]; //o buffer de PC está incluído aqui
 
 void scoreboarding();
 void issue(Instruction* instruction);

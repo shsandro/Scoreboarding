@@ -13,3 +13,7 @@ void increase_clock(){
 void end_clock(){
     finish_clock = 1;
 }
+
+int get_clock(){
+    return clock;
+}

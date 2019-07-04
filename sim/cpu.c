@@ -18,3 +18,7 @@ void execution_stage(){
         scoreboarding();
     }
 }
+
+void write_back_stage(){
+    
+}

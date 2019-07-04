@@ -24,14 +24,12 @@ int main(int argc, char **argv){
    initialize_queue();
    initialize_functional_units();
    initialize_list();
-   //printf("%u\n%u\n%u\n", read_mem(0), read_mem(4), read_mem(8));
-   for(int i = 0; i<=30; ++i){
-      execution_stage();
+
+   do {
+       execution_stage();
       fetch_stage();
-      // printf("\n");
-      // for (int j = 0; j<6; j++){
-      //    printf("%d->%d ",j, functional_units[j].operation);
-      // }
-   }
+      increase_clock();
+   } while(get_status_queue() == NOT_EMPTY || get_status_list() == NOT_EMPTY);
+     
    fclose(instructions);
 }
