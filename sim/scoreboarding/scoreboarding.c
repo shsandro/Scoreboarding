@@ -24,89 +24,38 @@ int get_functional_unit(int opcode, int operation){
     }
 }
 
-/*Recebe uma instrução, decodifica-a se a instrução anterior já foi emitida, e a manda para o estágio de issue*/
+void clear_list(){
+    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        if (scoreboarding_list.list[i] == NULL) continue;
+        switch (scoreboarding_list.list[i]->stage) {
+            case READ_OPERANDS:
+            case ISSUE:
+                reinitialize_unit(scoreboarding_list.list[i]->functional_unit);
+                if (functional_units[scoreboarding_list.list[i]->functional_unit].Fi != REGISTER_PC){
+                    int dest_register = functional_units[scoreboarding_list.list[i]->functional_unit].Fi;
+                    registers[dest_register].fu = NONE;
+                } 
+                free(scoreboarding_list.list[i]);
+                scoreboarding_list.list[i] = NULL;
+        }
+    }
+}
+
+/*Recebe uma instrução e a manda para o estágio de issue se a anterior já foi emitida. Para cada instrução dentro do scoreboarding, chama pra sua fase*/
 void scoreboarding(){
     if (ISSUED && get_status_queue() == NOT_EMPTY){
-        int data = get_instruction();
-        printf("instruction %d\n", data);
-        Instruction *instruction = (Instruction*)malloc(sizeof(Instruction));
-        int instruction_type = (data >> 26) & MASK_TYPE;
-        instruction->opcode = instruction_type;
+        Instruction* instruction = get_instruction();
         instruction->stage = ISSUE;
-        instruction->execution_begin = NONE;
-        int functional_unit;
-
-        switch (instruction_type) {
-            case SPECIAL:
-            {
-                instruction->r_instruction.rs = (data >> 21) & MASK_REGISTER;
-                instruction->r_instruction.rt = (data >> 16) & MASK_REGISTER;
-                instruction->r_instruction.rd = (data >> 11) & MASK_REGISTER;
-                instruction->r_instruction.shamt = (data >> 6) & MASK_REGISTER;
-                instruction->r_instruction.funct = data & MASK_TYPE;
-                functional_unit = get_functional_unit(instruction->opcode, instruction->r_instruction.funct);
-                instruction->functional_unit = functional_unit;
-                printf("SPECIAL: ");
-                printf("%d %d %d %d %d\n", instruction->opcode, instruction->r_instruction.rs, instruction->r_instruction.rt, instruction->r_instruction.rd, instruction->r_instruction.funct);
-                printf("FU: %d\n", functional_unit);
-            }
-                break;
-            case SPECIAL2:
-            {
-                instruction->r_instruction.rs = (data >> 21) & MASK_REGISTER;
-                instruction->r_instruction.rt = (data >> 16) & MASK_REGISTER;
-                instruction->r_instruction.rd = (data >> 11) & MASK_REGISTER;
-                instruction->r_instruction.shamt = (data >> 6) & MASK_REGISTER;
-                instruction->r_instruction.funct = data & MASK_TYPE;
-                functional_unit = get_functional_unit(instruction->opcode, instruction->r_instruction.funct);
-                instruction->functional_unit = functional_unit;
-                printf("SPECIAL2: ");
-                printf("%d %d %d %d %d\n", instruction->opcode, instruction->r_instruction.rs, instruction->r_instruction.rt, instruction->r_instruction.rd, instruction->r_instruction.funct);
-                printf("FU: %d\n", functional_unit);
-            }
-                break;
-            case REGIMM:
-            {
-                instruction->regimm_instruction.rs = (data >> 21) & MASK_REGISTER;
-                instruction->regimm_instruction.funct = (data >> 16) & MASK_REGISTER;
-                instruction->regimm_instruction.offset = data & MASK_OFFSET;
-                functional_unit = get_functional_unit(instruction->opcode, instruction->regimm_instruction.funct);
-                instruction->functional_unit = functional_unit;
-                printf("REGIMM: ");
-                printf("%d %d %d %d\n", instruction->opcode, instruction->regimm_instruction.rs, instruction->regimm_instruction.funct, instruction->regimm_instruction.offset);
-                printf("FU: %d\n", functional_unit);
-            }
-                break;
-            case J:
-            {
-                instruction->j_instruction.target = data & MASK_TARGET;
-                functional_unit = get_functional_unit(instruction->opcode, instruction->opcode);
-                instruction->functional_unit = functional_unit;
-                printf("J: ");
-                printf("%d %d\n", instruction->opcode, instruction->j_instruction.target);
-                printf("FU: %d\n", functional_unit);
-            }
-                break;
-            default:
-            {
-                instruction->i_instruction.rs = (data >> 21) & MASK_REGISTER;
-                instruction->i_instruction.rt = (data >> 16) & MASK_REGISTER;
-                instruction->i_instruction.immediate = data & MASK_OFFSET;
-                functional_unit = get_functional_unit(instruction->opcode, instruction->opcode);
-                instruction->functional_unit = functional_unit;
-                printf("IMMEDIATE: ");
-                printf("%d %d %d %d\n", instruction->opcode, instruction->i_instruction.rs, instruction->i_instruction.rt, instruction->i_instruction.immediate);
-                printf("FU: %d\n", functional_unit);
-            }
-        }
         ISSUED = false;
         insert_scoreboardig(instruction);
     }
+
     for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
         if (scoreboarding_list.list[i] == NULL) continue;
-        printf("estagio: %d\t",scoreboarding_list.list[i]->stage);
+        printf("instrução: %d estagio: %d\t", scoreboarding_list.list[i]->opcode, scoreboarding_list.list[i]->stage);
     }
     printf("\n");
+
     for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
         if (scoreboarding_list.list[i] == NULL) continue;
         switch (scoreboarding_list.list[i]->stage) {
@@ -129,7 +78,7 @@ void scoreboarding(){
 int wait(int functional_unit, int destiny){
     switch (functional_unit) {
         case MUL:
-            if (destiny == PC_BUFFER ){
+            if (destiny == REGISTER_PC ){
                 if (functional_units[UF_MUL1].busy && functional_units[UF_MUL2].busy) return UNAVAILABLE;
                 else {
                     if (!functional_units[UF_MUL1].busy){
@@ -159,7 +108,7 @@ int wait(int functional_unit, int destiny){
             return UNAVAILABLE;
             break;
         case DIV:
-            if (destiny == PC_BUFFER ){
+            if (destiny == REGISTER_PC ){
                 if (functional_units[UF_DIV1].busy && functional_units[UF_DIV2].busy) return UNAVAILABLE;
                 else {
                     if (!functional_units[UF_DIV1].busy){
@@ -189,7 +138,7 @@ int wait(int functional_unit, int destiny){
             return UNAVAILABLE;
             break;
         case SUB:
-            if (destiny == PC_BUFFER) {
+            if (destiny == REGISTER_PC) {
                 if (functional_units[UF_SUB].busy) return UNAVAILABLE;
                 else {
                     functional_units[UF_SUB].busy = true;
@@ -203,7 +152,7 @@ int wait(int functional_unit, int destiny){
             return UF_SUB;
             break;
         case ADD:
-            if (destiny == PC_BUFFER) {
+            if (destiny == REGISTER_PC) {
                 if (functional_units[UF_ADD].busy) return UNAVAILABLE;
                 else {
                     functional_units[UF_ADD].busy = true;
@@ -312,11 +261,11 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = (registers[instruction->r_instruction.rt].fu == NONE)? true : false;
                     break;
                 case I_JR:
-                    available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+                    available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
                     functional_units[instruction->functional_unit].operation = OP_ADD;
-                    functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+                    functional_units[instruction->functional_unit].Fi = REGISTER_PC;
                     functional_units[instruction->functional_unit].Fj = instruction->r_instruction.rs;
                     functional_units[instruction->functional_unit].Fk = NONE;
                     functional_units[instruction->functional_unit].Qj = registers[instruction->r_instruction.rs].fu;
@@ -484,11 +433,11 @@ void issue(Instruction* instruction){
             }
             break;
         case REGIMM:
-            available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+            available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
             if (available_functional_unit == UNAVAILABLE) return;
             instruction->functional_unit = available_functional_unit;
             functional_units[instruction->functional_unit].operation = OP_ADD;
-            functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+            functional_units[instruction->functional_unit].Fi = REGISTER_PC;
             functional_units[instruction->functional_unit].Fj = instruction->regimm_instruction.rs;
             functional_units[instruction->functional_unit].Fk = NONE;
             functional_units[instruction->functional_unit].Qj = registers[instruction->regimm_instruction.rs].fu;
@@ -497,11 +446,11 @@ void issue(Instruction* instruction){
             functional_units[instruction->functional_unit].Rk = true;
             break;
         case J:
-            available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+            available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
             if (available_functional_unit == UNAVAILABLE) return;
             instruction->functional_unit = available_functional_unit;
             functional_units[instruction->functional_unit].operation = OP_ADD;
-            functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+            functional_units[instruction->functional_unit].Fi = REGISTER_PC;
             functional_units[instruction->functional_unit].Fj = NONE;
             functional_units[instruction->functional_unit].Fk = NONE;
             functional_units[instruction->functional_unit].Qj = NONE;
@@ -538,11 +487,11 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = true;
                     break;
                 case I_BEQ:
-                    available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+                    available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
                     functional_units[instruction->functional_unit].operation = OP_ADD;
-                    functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+                    functional_units[instruction->functional_unit].Fi = REGISTER_PC;
                     functional_units[instruction->functional_unit].Fj = instruction->i_instruction.rs;
                     functional_units[instruction->functional_unit].Fk = instruction->i_instruction.rt;
                     functional_units[instruction->functional_unit].Qj = registers[instruction->i_instruction.rs].fu;
@@ -551,11 +500,11 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = (registers[instruction->i_instruction.rt].fu == NONE)? true : false;
                     break;
                 case I_BEQL:
-                    available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+                    available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
                     functional_units[instruction->functional_unit].operation = OP_ADD;
-                    functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+                    functional_units[instruction->functional_unit].Fi = REGISTER_PC;
                     functional_units[instruction->functional_unit].Fj = instruction->i_instruction.rs;
                     functional_units[instruction->functional_unit].Fk = instruction->i_instruction.rt;
                     functional_units[instruction->functional_unit].Qj = registers[instruction->i_instruction.rs].fu;
@@ -564,11 +513,11 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = (registers[instruction->i_instruction.rt].fu == NONE)? true : false;
                     break;
                 case I_BGTZ:
-                    available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+                    available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
                     functional_units[instruction->functional_unit].operation = OP_ADD;
-                    functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+                    functional_units[instruction->functional_unit].Fi = REGISTER_PC;
                     functional_units[instruction->functional_unit].Fj = instruction->i_instruction.rs;
                     functional_units[instruction->functional_unit].Fk = NONE;
                     functional_units[instruction->functional_unit].Qj = registers[instruction->i_instruction.rs].fu;
@@ -577,11 +526,11 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = true;
                     break;
                 case I_BLEZ:
-                    available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+                    available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
                     functional_units[instruction->functional_unit].operation = OP_ADD;
-                    functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+                    functional_units[instruction->functional_unit].Fi = REGISTER_PC;
                     functional_units[instruction->functional_unit].Fj = instruction->i_instruction.rs;
                     functional_units[instruction->functional_unit].Fk = NONE;
                     functional_units[instruction->functional_unit].Qj = registers[instruction->i_instruction.rs].fu;
@@ -590,11 +539,11 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = true;
                     break;
                 case I_BNE:
-                    available_functional_unit = wait(instruction->functional_unit, PC_BUFFER);
+                    available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
                     functional_units[instruction->functional_unit].operation = OP_ADD;
-                    functional_units[instruction->functional_unit].Fi = PC_BUFFER;
+                    functional_units[instruction->functional_unit].Fi = REGISTER_PC;
                     functional_units[instruction->functional_unit].Fj = instruction->i_instruction.rs;
                     functional_units[instruction->functional_unit].Fk = instruction->i_instruction.rt;
                     functional_units[instruction->functional_unit].Qj = registers[instruction->i_instruction.rs].fu;
@@ -644,7 +593,7 @@ void issue(Instruction* instruction){
             }
     }
 
-    if(functional_units[instruction->functional_unit].Fi != NONE && functional_units[instruction->functional_unit].Fi != PC_BUFFER)
+    if(functional_units[instruction->functional_unit].Fi != NONE && functional_units[instruction->functional_unit].Fi != REGISTER_PC)
         registers[functional_units[instruction->functional_unit].Fi].fu = instruction->functional_unit;
     ISSUED = true;
     instruction->stage = READ_OPERANDS;
@@ -655,7 +604,7 @@ void read_operands(Instruction* instruction){
         if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     } else if (functional_units[instruction->functional_unit].Fj != NONE){
         if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
-    } else {
+    } else if (functional_units[instruction->functional_unit].Fk != NONE){
         if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     }
     functional_units[instruction->functional_unit].Rj = true;
@@ -695,10 +644,12 @@ void execute(Instruction* instruction){
                 break;
                 case I_JR:
                 {
-                    if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                    //if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, operand_1, operand_2);
+                    PC.data = add_unit(OP_ADD, operand_1, operand_2);
+                    clear_queue();
+                    clear_list();
                 }
                 break;
                 case I_MFHI:
@@ -836,20 +787,27 @@ void execute(Instruction* instruction){
         case REGIMM:
             switch (instruction->regimm_instruction.funct) {
                 case I_BGEZ:
-                    if (read_register(functional_units[instruction->functional_unit].Fj) >= 0){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (read_register(functional_units[instruction->functional_unit].Fj) < 0){//Salto é tomado se maior ou igual a zero. Se menor devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
+                    }
+                    break;
                 case I_BLTZ:
-                    if (read_register(functional_units[instruction->functional_unit].Fj) < 0){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (read_register(functional_units[instruction->functional_unit].Fj) >= 0){//Salto é tomado se menor que zero. Se maior ou igual devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
+                    }
             }
             break;
         case J:
-            if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-            functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->j_instruction.target, 0);
+            //PC já foi atualizado na fase de ISSUE
+            // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
             break;
         default:
             switch (instruction->opcode) {
@@ -871,42 +829,57 @@ void execute(Instruction* instruction){
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    if (operand_1 == operand_2){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    }
                 }    
                 break;
                 case I_BEQL:
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    if (operand_1 == operand_2){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    }
                 }    
                 break;
                 case I_BGTZ:
-                     if (read_register(functional_units[instruction->functional_unit].Fj) > 0){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                     if (read_register(functional_units[instruction->functional_unit].Fj) <= 0){//salto é tomado se maior que zero. Se é menor ou igual devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    }
                     break;
                 case I_BLEZ:
-                    if (read_register(functional_units[instruction->functional_unit].Fj) <= 0){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (read_register(functional_units[instruction->functional_unit].Fj) > 0){//salto é tomado se menor ou igual a zero. Se é maior devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    }
                     break;
                 case I_BNE:
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    if (operand_1 != operand_2){
-                        if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
-                        functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    } else functional_units[instruction->functional_unit].result[0] = PC.data;
+                    if (operand_1 == operand_2){ //salto é tomado se diferente. Se é igual devo arrumar PC
+                        PC.data = AR.data;
+                        clear_queue();
+                        clear_list();
+                        // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
+                        // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
+                    }
                 }    
                 break;
                 case I_LUI:
@@ -951,9 +924,8 @@ void write_back(Instruction* instruction){
                     registers[HIGH].fu = NONE;
                     break;
                 default:
-                    if (functional_units[instruction->functional_unit].Fi == PC_BUFFER) PC.data = functional_units[instruction->functional_unit].result[0];
-                    else registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
-                    if (functional_units[instruction->functional_unit].Fi != PC_BUFFER){
+                    if (functional_units[instruction->functional_unit].Fi != REGISTER_PC){
+                        registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
                         int dest_register = functional_units[instruction->functional_unit].Fi;
                         registers[dest_register].fu = NONE;
                     }
@@ -966,10 +938,9 @@ void write_back(Instruction* instruction){
             registers[HIGH].fu = NONE;
             break;
         default:
-            if (functional_units[instruction->functional_unit].Fi == PC_BUFFER) PC.data = functional_units[instruction->functional_unit].result[0];
-            else registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
-            if (functional_units[instruction->functional_unit].Fi != PC_BUFFER){
+            if (functional_units[instruction->functional_unit].Fi != REGISTER_PC){
                 int dest_register = functional_units[instruction->functional_unit].Fi;
+                registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
                 registers[dest_register].fu = NONE;
             }
     }

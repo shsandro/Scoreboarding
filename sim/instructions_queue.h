@@ -9,7 +9,7 @@
 #define NOT_EMPTY false
 
 typedef struct{
-    int* instructions_queue;
+    Instruction** instructions_queue;
     int num_instructions, begin, end;
     int max_instructions; //número máximo de instruções a serem buscadas é 4
 }Queue;
@@ -17,9 +17,10 @@ typedef struct{
 Queue* Instructions_Queue;
 
 void initialize_queue();
-bool insert_instruction(int instruction);
+bool insert_instruction(Instruction* instruction);
 bool remove_instruction();
 bool get_status_queue();
-int get_instruction();
+Instruction* get_instruction();
+void clear_queue();
 
 #endif

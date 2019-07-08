@@ -15,9 +15,15 @@
 #define EXECUTION 3
 #define WRITE_BACK 4
 
+/*Se a unidade funcional está disponível ou não*/
 #define UNAVAILABLE -1
 
-#define PC_BUFFER 34 //buffer para PC
+/*Saltos*/
+#define WRONG false
+#define RIGHT true
+int branch;
+
+#define REGISTER_PC 34 //buffer para PC
 
 Register registers_buffer[34]; //o buffer de PC está incluído aqui
 
@@ -27,5 +33,6 @@ void read_operands(Instruction* instruction);
 void execute(Instruction* instruction);
 void write_back(Instruction* instruction);
 int get_functional_unit(int opcode, int operation);
+void clear_list();
 
 #endif

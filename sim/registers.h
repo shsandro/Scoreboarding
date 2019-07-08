@@ -19,7 +19,7 @@ typedef struct{
 /*Banco de registradores MIPS32*/
 Register registers[34]; /*Registrador zero sempre armazena o valor 0*/
 /*Registradores PC e IR*/
-Register PC, IR;
+Register PC, IR, AR; //AR armazena o endereço anterior de PC para casos de saltos condicionais
 
 void initialize_registers();
 int read_register(int register);

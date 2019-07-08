@@ -12,5 +12,6 @@
 void fetch_stage();
 void execution_stage();
 void write_back_stage();
+Instruction* decode(int data);
 
 #endif
