@@ -2,6 +2,8 @@
 #define ULA_H
 
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include "../instructions.h"
 
 #define BUSY true

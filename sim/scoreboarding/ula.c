@@ -60,6 +60,9 @@ int mul_unit(int operand_1, int operand_2){
 
 /*realiza as operações das unidades funcionais de div*/
 int div_unit(int operation, int operand_1, int operand_2){
-    if (operand_2 == 0) return 0;
+    if (operand_2 == 0) {
+        printf("Erro: Divisão por zero.");
+        exit(EXIT_FAILURE);
+    }
     return (operation == OP_DIV)? (int)(operand_1 / operand_2): operand_1 % operand_2;
 }
