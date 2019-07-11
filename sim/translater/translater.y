@@ -4,6 +4,10 @@
 #define SPECIAL_OPCODE 0b000000
 #define SPECIAL2_OPCODE 0b011100
 #define REGIMM_OPCODE 0b000001
+
+extern int yylex();
+extern int yyparse();
+extern FILE *yyin;
 %}
 
 %union{
@@ -29,15 +33,17 @@
 
 /*Declaração dos tokens*/
 //Instruções imediatas
-%token ADDI ANDI B BEQ BEQL BGTZ BLEZ BNE LUI ORI XORI
+%token <value> ADDI ANDI B BEQ BEQL BGTZ BLEZ BNE LUI ORI XORI
 //Jump
-%token JUMP
+%token <value> J
 //Instruções SPECIAL E SPECIAL2
-%token ADD AND DIV JR MFHI MFLO MOVN MOVZ MTHI MTLO MULT NOP NOR OR SUB XOR MADD MSUB MUL
+%token <value> ADD AND DIV JR MFHI MFLO MOVN MOVZ MTHI MTLO MULT NOP NOR OR SUB XOR MADD MSUB MUL
 //Instruções REGIMM
-%token BGEZ BLTZ
+%token <value> BGEZ BLTZ
 //Outros
-%token COMMA EOL REGISTER IMMEDIATE LABEL 
+%token <value> REGISTER IMMEDIATE
+%token <str> LABEL
+%token COMMA EOL
 
 /*Declaração dos tipos*/
 %type <R_Instruction> r_instruction
@@ -94,3 +100,16 @@ regimm_instruction: BGEZ REGISTER comma IMMEDIATE {$$.opcode = REGIMM_OPCODE; $$
             | BLTZ REGISTER comma IMMEDIATE {$$.opcode = REGIMM_OPCODE; $$.rs = $2; $$.funct = $1; $$.offset = $4;}
 
 j_instruction: J IMMEDIATE {$$.opcode = $1; $$.target = $2;}
+
+%%
+
+main(int argc, char **argv)
+{
+    FILE *myfile = fopen("testInstructions.txt", "r");
+    yyin = myfile;
+    yyparse();
+}
+
+void yyerror (char const *s) {
+   fprintf (stderr, "%s\n", s);
+ }

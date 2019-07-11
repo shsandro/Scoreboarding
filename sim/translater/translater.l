@@ -1,6 +1,7 @@
 %{
 #include "util.h"
 #include <stdio.h>
+#include "translater.tab.h"
 %}
 
 %%
@@ -38,7 +39,7 @@
 [S-s][U-u][B-b] {yylval.value = 0b100010; return SUB;}
 [X-x][O-o][R-r] {yylval.value = 0b100110; return XOR;}
 
-[M-m][A-a][D-d] {yylval.value = 0b000000; return MAD;}
+[M-m][A-a][D-d][D-d] {yylval.value = 0b000000; return MADD;}
 [M-m][S-s][U-u][B-b] {yylval.value = 0b000100; return MSUB;}
 [M-m][U-u][L-l] {yylval.value = 0b000010; return MUL;}
 
@@ -60,13 +61,8 @@
 "$ra" { yylval.value = 31; return REGISTER; }
 
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.str = strdup(yytext); return LABEL; }
-0[xX][0-9a-fA-F]+ { yylval.value = (int)strtol(yytext, NULL, 0)); return IMMEDIATE; }
+0[xX][0-9a-fA-F]+ { yylval.value = (int)strtol(yytext, NULL, 0); return IMMEDIATE; }
 
 [ \t]
 
 %%
-
-main(int argc, char **argv)
-{
-  yylex();
-}
