@@ -5,28 +5,23 @@
 #define SPECIAL2_OPCODE 0b011100
 #define REGIMM_OPCODE 0b000001
 
-extern int yylex();
-extern int yyparse();
 extern FILE *yyin;
+
 %}
 
 %union{
-  typedef struct{
+  struct R{
     int opcode, rd, rs, rt, shamt, funct;
   }R_Instruction;
-
-  typedef struct{
+  struct I{
     int opcode, rs, rt, immediate;
   }I_instrucition;
-
-  typedef struct{
+  struct REGIMM{
     int opcode, rs, funct, offset;
   }REGIMM_Instruction;
-
-  typedef struct{
+  struct J{
     int opcode, target;
   }J_Instruction;
-
   int value;
   char *str;
 }
@@ -53,36 +48,39 @@ extern FILE *yyin;
 
 %%
 
+all: 
+    | all instruction eol
+
 comma:
      | COMMA
 
 eol:
   | eol EOL
 
-instruction: r_instruction
-           | i_instruction
-           | regimm_instruction
-           | j_instruction
+instruction: r_instruction {printf("É uma R\n");}
+           | i_instruction {printf("É uma I\n");}
+           | regimm_instruction {printf("É uma Regimm\n");}
+           | j_instruction {printf("É uma J\n");}
 
-r_instruction: ADD REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | AND REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | DIV REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.sham = 0; $$.funct = $1;}
-            | JR REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.sham = 0; $$.funct = $1;}
-            | MFHI REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.sham = 0; $$.funct = $1;}
-            | MFLO REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.sham = 0; $$.funct = $1;}
-            | MOVN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | MOVZ REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | MTHI REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.sham = 0; $$.funct = $1;}
-            | MTLO REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.sham = 0; $$.funct = $1;}
-            | MULT REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.sham = 0; $$.funct = $1;}
-            | NOP {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = 0; $$.rt = 0; $$.sham = 0; $$.funct = $1;}
-            | NOR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | OR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | SUB REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | XOR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
-            | MADD REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.sham = 0; $$.funct = $1;}
-            | MSUB REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.sham = 0; $$.funct = $1;}
-            | MUL REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.sham = 0; $$.funct = $1;}
+r_instruction: ADD REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | AND REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | DIV REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | JR REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MFHI REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MFLO REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MOVN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | MOVZ REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | MTHI REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MTLO REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MULT REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | NOP {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | NOR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | OR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | SUB REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | XOR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | MADD REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | MSUB REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | MUL REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
 
 i_instruction: ADDI REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
             | ANDI REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
@@ -110,6 +108,8 @@ main(int argc, char **argv)
     yyparse();
 }
 
-void yyerror (char const *s) {
-   fprintf (stderr, "%s\n", s);
- }
+void yyerror(const char *s) {
+  printf("EEK, parse error! Message: %s\n", s);
+  // might as well halt now:
+  exit(-1);
+}

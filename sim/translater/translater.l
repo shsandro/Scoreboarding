@@ -15,8 +15,8 @@
 [B-b] {yylval.value = 0b000100; return B;}
 [B-b][E-e][Q-q] {yylval.value = 0b000100; return BEQ;}
 [B-b][E-e][Q-q][L-l] {yylval.value = 0b010100; return BEQL;}
-[B-b][G-g][T-t][Z-z] {yylval.value = 0b000111; return BGTZ;}
-[B-b][L-l][E-e][Z-z] {yylval.value = 0b000110; return BLEZ;}
+[B-b][G-g][T-t][Z-z] {yylval.value = 0b000111; printf("bgtz\n");return BGTZ;}
+[B-b][L-l][E-e][Z-z] {yylval.value = 0b000110; printf("blez\n");return BLEZ;}
 [B-b][N-n][E-e] {yylval.value = 0b000101; return BNE;}
 [L-l][U-u][I-i] {yylval.value = 0b001111; return LUI;}
 [O-o][R-r][I-i] {yylval.value = 0b001101; return ORI;}
@@ -43,8 +43,8 @@
 [M-m][S-s][U-u][B-b] {yylval.value = 0b000100; return MSUB;}
 [M-m][U-u][L-l] {yylval.value = 0b000010; return MUL;}
 
-[B-b][G-g][E-e][Z-z] {yylval.value = 0b000001; return BGEZ;}
-[B-b][L-l][T-t][Z-z] {yylval.value = 0b000000; return BLTZ;}
+[B-b][G-g][E-e][Z-z] {yylval.value = 0b000001; printf("bgez\n"); return BGEZ;}
+[B-b][L-l][T-t][Z-z] {yylval.value = 0b000000; printf("bltz\n"); return BLTZ;}
 
 [J-j] {yylval.value = 0b000010; return J;}
 
@@ -53,7 +53,7 @@
 "$"[v][0-1] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$"[a][0-3] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$"[t][0-9] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
-"$"[s][0-7] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
+"$"[s][0-7] { yylval.value = get_register(yytext[1], yytext[2]); printf("register %d\n", yylval.value); return REGISTER; }
 "$"[k][0-1] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$gp" { yylval.value = 28; return REGISTER; }
 "$sp" { yylval.value = 29; return REGISTER; }
@@ -61,8 +61,10 @@
 "$ra" { yylval.value = 31; return REGISTER; }
 
 [a-zA-Z_][a-zA-Z0-9_]* { yylval.str = strdup(yytext); return LABEL; }
-0[xX][0-9a-fA-F]+ { yylval.value = (int)strtol(yytext, NULL, 0); return IMMEDIATE; }
+0[xX][0-9a-fA-F]+ { yylval.value = (int)strtol(yytext, NULL, 0); printf("imediato: %d\n", yylval.value); return IMMEDIATE; }
 
 [ \t]
+
+. { printf("Mystery character %c\n", *yytext); }
 
 %%

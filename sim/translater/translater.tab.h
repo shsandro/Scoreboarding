@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.3.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -29,6 +30,9 @@
 
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
+
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
 
 #ifndef YY_YY_TRANSLATER_TAB_H_INCLUDED
 # define YY_YY_TRANSLATER_TAB_H_INCLUDED
@@ -91,28 +95,24 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 13 "translater.y" /* yacc.c:1909  */
+#line 12 "translater.y" /* yacc.c:1921  */
 
-  typedef struct{
+  struct R{
     int opcode, rd, rs, rt, shamt, funct;
   }R_Instruction;
-
-  typedef struct{
+  struct I{
     int opcode, rs, rt, immediate;
   }I_instrucition;
-
-  typedef struct{
+  struct REGIMM{
     int opcode, rs, funct, offset;
   }REGIMM_Instruction;
-
-  typedef struct{
+  struct J{
     int opcode, target;
   }J_Instruction;
-
   int value;
   char *str;
 
-#line 116 "translater.tab.h" /* yacc.c:1909  */
+#line 116 "translater.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;
