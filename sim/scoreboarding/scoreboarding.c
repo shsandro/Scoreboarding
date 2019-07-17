@@ -41,6 +41,29 @@ void clear_list(){
     }
 }
 
+/*Executa os estágios do scoreboarding para cada instrução dentro dele*/
+void run_scoreboarding(){
+    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        if (scoreboarding_list.list[i] == NULL) continue;
+        if (scoreboarding_list.list[i]->stage == WRITE_BACK) write_back(scoreboarding_list.list[i]);
+    }
+
+    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        if (scoreboarding_list.list[i] == NULL) continue;
+        if (scoreboarding_list.list[i]->stage == EXECUTION) execute(scoreboarding_list.list[i]);
+    }
+
+    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        if (scoreboarding_list.list[i] == NULL) continue;
+        if (scoreboarding_list.list[i]->stage == READ_OPERANDS) read_operands(scoreboarding_list.list[i]);
+    }
+
+    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        if (scoreboarding_list.list[i] == NULL) continue;
+        if (scoreboarding_list.list[i]->stage == ISSUE) issue(scoreboarding_list.list[i]);
+    }
+}
+
 /*Recebe uma instrução e a manda para o estágio de issue se a anterior já foi emitida. Para cada instrução dentro do scoreboarding, chama pra sua fase*/
 void scoreboarding(){
     if (ISSUED && get_status_queue() == NOT_EMPTY){
@@ -56,22 +79,7 @@ void scoreboarding(){
     }
     printf("\n");
 
-    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
-        if (scoreboarding_list.list[i] == NULL) continue;
-        switch (scoreboarding_list.list[i]->stage) {
-            case ISSUE:
-                issue(scoreboarding_list.list[i]);
-                break;
-            case READ_OPERANDS:
-                read_operands(scoreboarding_list.list[i]);
-                break;
-            case EXECUTION:
-                execute(scoreboarding_list.list[i]);
-                break;
-            case WRITE_BACK:
-                write_back(scoreboarding_list.list[i]);
-        }
-    }
+    run_scoreboarding();
 }
 
 /*Espera até que uma uf correspondente esteja disponível e o registrador de destino também*/

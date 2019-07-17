@@ -1,4 +1,4 @@
 all:
 	@bison -d translater.y
 	@flex translater.l
-	@cc util.c translater.tab.c lex.yy.c -lfl
+	@gcc util.c hash.c translater.tab.c lex.yy.c -lfl

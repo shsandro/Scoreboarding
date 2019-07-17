@@ -28,6 +28,7 @@ int branch;
 Register registers_buffer[34]; //o buffer de PC está incluído aqui
 
 void scoreboarding();
+void run_scoreboarding();
 void issue(Instruction* instruction);
 void read_operands(Instruction* instruction);
 void execute(Instruction* instruction);

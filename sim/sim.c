@@ -18,8 +18,12 @@ void init(FILE* arq){
 
 int main(int argc, char **argv){
    FILE* instructions;
-   instructions = fopen("instructions.txt", "wr+");
-   init(instructions);
+   char file[100];
+   printf("Digite o nome do arquivo de instruções: ");
+	fgets(file, 99, stdin);
+	file[strlen(file)-1] = '\0';
+   instructions = fopen(file, "r");
+   //init(instructions);
    load_memory(instructions);
    initialize_registers();
    initialize_queue();

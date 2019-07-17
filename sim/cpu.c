@@ -97,7 +97,7 @@ void fetch_stage(){
             switch (instruction->opcode) {
                 case REGIMM:
                     AR.data = PC.data;
-                    PC.data += instruction->regimm_instruction.offset; //salto é tomado aqui
+                    PC.data = instruction->regimm_instruction.offset; //salto é tomado aqui
                     break;
                 case J:
                     PC.data = instruction->j_instruction.target; //salto é tomado aqui
@@ -108,7 +108,7 @@ void fetch_stage(){
                 case I_BLEZ:
                 case I_BNE:
                     AR.data = PC.data;
-                    PC.data += instruction->i_instruction.immediate; //salto é tomado aqui
+                    PC.data = instruction->i_instruction.immediate; //salto é tomado aqui
                     break;
                 default:
                     PC.data += 4;

@@ -80,3 +80,42 @@ int get_register(char c, char i){
         exit(EXIT_FAILURE);
     }
 }
+
+void write_r_instruction(int opcode, int rd, int rs, int rt, int funct){
+    printf("Escrevendo uma R\n");
+    int instruction = opcode; instruction = instruction << 26;
+    rs = rs << 21; instruction = instruction | rs;
+    rt = rt << 16; instruction = instruction | rt;
+    rd = rd << 11; instruction = instruction | rd;
+    instruction = instruction | funct;
+    printf("Instrução %d\n", instruction);
+    fwrite(&instruction, 4, 1, instructions);
+}
+
+void write_i_instruction(int opcode, int rs, int rt, int immediate){
+    printf("Escrevendo uma I\n");
+    int instruction = opcode; instruction = instruction << 26;
+    rs = rs << 21; instruction = instruction | rs;
+    rt = rt << 16; instruction = instruction | rt;
+    instruction = instruction | immediate;
+    printf("Instrução %d\n", instruction);
+    fwrite(&instruction, 4, 1, instructions);
+}
+
+void write_regimm_instruction(int opcode, int rs, int funct, int offset){
+    printf("Escrevendo uma Regimm\n");
+    int instruction = opcode; instruction = instruction << 26;
+    rs = rs << 21; instruction = instruction | rs;
+    funct = funct << 16; instruction = instruction | funct;
+    instruction = instruction | offset;
+    printf("Instrução %d\n", instruction);
+    fwrite(&instruction, 4, 1, instructions);
+}
+
+void write_j_instruction(int opcode, int target){
+    printf("Escrevendo uma J\n");
+    int instruction = opcode; instruction = instruction << 26;
+    instruction = instruction | target;
+    printf("Instrução %d\n", instruction);
+    fwrite(&instruction, 4, 1, instructions);
+}
