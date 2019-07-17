@@ -1,16 +1,17 @@
 %{
 #include "util.h"
 #include "hash.h"
+#include "integration.h"
 
 #define SPECIAL_OPCODE 0b000000
 #define SPECIAL2_OPCODE 0b011100
 #define REGIMM_OPCODE 0b000001
 
 extern FILE *yyin;
-int PC = 0;
-int num_instructions = 0;
+extern FILE *input;
+extern FILE *output;
+int instructions_count = 0;
 int second_pass = 0;
-FILE* output;
 %}
 
 %union{
@@ -20,10 +21,10 @@ FILE* output;
   struct I{
     int opcode, rs, rt, immediate;
   }I_instrucition;
-  struct REGIMM{
+  struct REGIMM_R{
     int opcode, rs, funct, offset;
   }REGIMM_Instruction;
-  struct J{
+  struct JUMP{
     int opcode, target;
   }J_Instruction;
   int value;
@@ -32,13 +33,13 @@ FILE* output;
 
 /*Declaração dos tokens*/
 //Instruções imediatas
-%token <value> ADDI ANDI B BEQ BEQL BGTZ BLEZ BNE LUI ORI XORI
+%token <value> ADDI_TOKEN ANDI_TOKEN B_TOKEN BEQ_TOKEN BEQL_TOKEN BGTZ_TOKEN BLEZ_TOKEN BNE_TOKEN LUI_TOKEN ORI_TOKEN XORI_TOKEN
 //Jump
-%token <value> J
+%token <value> JUMP_TOKEN
 //Instruções SPECIAL E SPECIAL2
-%token <value> ADD AND DIV JR MFHI MFLO MOVN MOVZ MTHI MTLO MULT NOP NOR OR SUB XOR MADD MSUB MUL
+%token <value> ADD_TOKEN AND_TOKEN DIV_TOKEN JR_TOKEN MFHI_TOKEN MFLO_TOKEN MOVN_TOKEN MOVZ_TOKEN MTHI_TOKEN MTLO_TOKEN MULT_TOKEN NOP_TOKEN NOR_TOKEN OR_TOKEN SUB_TOKEN XOR_TOKEN MADD_TOKEN MSUB_TOKEN MUL_TOKEN
 //Instruções REGIMM
-%token <value> BGEZ BLTZ
+%token <value> BGEZ_TOKEN BLTZ_TOKEN
 //Outros
 %token <value> REGISTER IMMEDIATE
 %token <value> LABEL
@@ -62,71 +63,66 @@ comma:
 eol:
   | eol EOL
 
-instruction: r_instruction {if(second_pass){num_instructions++; write_r_instruction($1.opcode, $1.rd, $1.rs, $1.rt, $1.funct);}else{num_instructions++;}}
-           | i_instruction {if(second_pass){num_instructions++; write_i_instruction($1.opcode, $1.rs, $1.rt, $1.immediate);}else{num_instructions++;}}
-           | regimm_instruction {if(second_pass){num_instructions++; write_regimm_instruction($1.opcode, $1.rs, $1.funct, $1.offset);}else{num_instructions++;}}
-           | j_instruction {if(second_pass){num_instructions++; write_j_instruction($1.opcode, $1.target);}else{num_instructions++;}}
+instruction: r_instruction {if(second_pass){instructions_count++; write_r_instruction($1.opcode, $1.rd, $1.rs, $1.rt, $1.funct);}else{instructions_count++;}}
+           | i_instruction {if(second_pass){instructions_count++; write_i_instruction($1.opcode, $1.rs, $1.rt, $1.immediate);}else{instructions_count++;}}
+           | regimm_instruction {if(second_pass){instructions_count++; write_regimm_instruction($1.opcode, $1.rs, $1.funct, $1.offset);}else{instructions_count++;}}
+           | j_instruction {if(second_pass){instructions_count++; write_j_instruction($1.opcode, $1.target);}else{instructions_count++;}}
 
-r_instruction: ADD REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | AND REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | DIV REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
-            | JR REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
-            | MFHI REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
-            | MFLO REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
-            | MOVN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | MOVZ REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | MTHI REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
-            | MTLO REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
-            | MULT REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
-            | NOP {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
-            | NOR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | OR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | SUB REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | XOR REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
-            | MADD REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
-            | MSUB REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
-            | MUL REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+r_instruction: ADD_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | AND_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | DIV_TOKEN REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | JR_TOKEN REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MFHI_TOKEN REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MFLO_TOKEN REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MOVN_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | MOVZ_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | MTHI_TOKEN REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MTLO_TOKEN REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | MULT_TOKEN REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | NOP_TOKEN {$$.opcode = SPECIAL_OPCODE; $$.rd = 0; $$.rs = 0; $$.rt = 0; $$.shamt = 0; $$.funct = $1;}
+            | NOR_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | OR_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | SUB_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | XOR_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
+            | MADD_TOKEN REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | MSUB_TOKEN REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = 0; $$.rs = $2; $$.rt = $4; $$.shamt = 0; $$.funct = $1;}
+            | MUL_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL2_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
 
-i_instruction: ADDI REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
-            | ANDI REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
-            | B LABEL {$$.opcode = $1; $$.rs = 0; $$.rt = 0; $$.immediate = $2;}
-            | BEQ REGISTER comma REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
-            | BEQL REGISTER comma REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
-            | BGTZ REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = 0; $$.immediate = $4;}
-            | BLEZ REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = 0; $$.immediate = $4;}
-            | BNE REGISTER comma REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
-            | LUI REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = 0; $$.rt = $2; $$.immediate = $4;}
-            | ORI REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
-            | XORI REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
+i_instruction: ADDI_TOKEN REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rt = $2; $$.rs = $4; $$.immediate = $6;}
+            | ANDI_TOKEN REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rt = $2; $$.rs = $4; $$.immediate = $6;}
+            | B_TOKEN LABEL {$$.opcode = $1; $$.rs = 0; $$.rt = 0; $$.immediate = $2;}
+            | BEQ_TOKEN REGISTER comma REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
+            | BEQL_TOKEN REGISTER comma REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
+            | BGTZ_TOKEN REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = 0; $$.immediate = $4;}
+            | BLEZ_TOKEN REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = 0; $$.immediate = $4;}
+            | BNE_TOKEN REGISTER comma REGISTER comma LABEL {$$.opcode = $1; $$.rs = $2; $$.rt = $4; $$.immediate = $6;}
+            | LUI_TOKEN REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rs = 0; $$.rt = $2; $$.immediate = $4;}
+            | ORI_TOKEN REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rt = $2; $$.rs = $4; $$.immediate = $6;}
+            | XORI_TOKEN REGISTER comma REGISTER comma IMMEDIATE {$$.opcode = $1; $$.rt = $2; $$.rs = $4; $$.immediate = $6;}
 
-regimm_instruction: BGEZ REGISTER comma LABEL {$$.opcode = REGIMM_OPCODE; $$.rs = $2; $$.funct = $1; $$.offset = $4;}
-            | BLTZ REGISTER comma LABEL {$$.opcode = REGIMM_OPCODE; $$.rs = $2; $$.funct = $1; $$.offset = $4;}
+regimm_instruction: BGEZ_TOKEN REGISTER comma LABEL {$$.opcode = REGIMM_OPCODE; $$.rs = $2; $$.funct = $1; $$.offset = $4;}
+            | BLTZ_TOKEN REGISTER comma LABEL {$$.opcode = REGIMM_OPCODE; $$.rs = $2; $$.funct = $1; $$.offset = $4;}
 
-j_instruction: J LABEL {$$.opcode = $1; $$.target = $2;}
+j_instruction: JUMP_TOKEN LABEL {$$.opcode = $1; $$.target = $2;}
 
 %%
 
-void main()
+void translater(char* assembly_file)
 {
-    FILE* input;
-    char file[100];
-    printf("Digite o nome do arquivo de assembly: ");
-	  fgets(file, 99, stdin);
-	  file[strlen(file)-1] = '\0';
-    input = fopen(file, "r");
+    input_assembly = fopen(assembly_file, "r");
 
-    instructions = fopen("instructions.txt", "wr+");
+    output = fopen("instructions.txt", "wr+");
 
     init_hash();
-    yyin = input;
+    yyin = input_assembly;
     yyparse();
-    rewind(input);
+    rewind(input_assembly);
     second_pass = 1;
-    num_instructions = 0;
+    instructions_count = 0;
     printf("\nComeçando segunda passada\n\n");
     yyparse();
-    fclose(input);
-    fclose(instructions);
+    fclose(input_assembly);
+    fclose(output);
 }
 
 void yyerror(const char *s) {

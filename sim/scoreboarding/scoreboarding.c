@@ -1,6 +1,7 @@
 #include "scoreboarding.h"
 
 bool ISSUED = true;
+int BRANCH_PREDICTION = true;
 
 /*Recebe uma operação e devolve que tipo de unidade funcional pode executá-la*/
 int get_functional_unit(int opcode, int operation){
@@ -73,9 +74,10 @@ void scoreboarding(){
         insert_scoreboardig(instruction);
     }
 
+    printf("\n--------------SCOREBOARDING -----------------");
     for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
         if (scoreboarding_list.list[i] == NULL) continue;
-        printf("instrução: %d estagio: %d\t", scoreboarding_list.list[i]->opcode, scoreboarding_list.list[i]->stage);
+        printf("\nInstrução: %d Estagio: %d\t", scoreboarding_list.list[i]->opcode, scoreboarding_list.list[i]->stage);
     }
     printf("\n");
 
@@ -926,29 +928,29 @@ void write_back(Instruction* instruction){
         case SPECIAL:
             switch (instruction->r_instruction.funct){
                 case DIV:
-                    registers_buffer[LOW].data = functional_units[instruction->functional_unit].result[0];
-                    registers_buffer[HIGH].data = functional_units[instruction->functional_unit].result[1];
+                    registers[LOW].data = functional_units[instruction->functional_unit].result[0];
+                    registers[HIGH].data = functional_units[instruction->functional_unit].result[1];
                     registers[LOW].fu = NONE;
                     registers[HIGH].fu = NONE;
                     break;
                 default:
                     if (functional_units[instruction->functional_unit].Fi != REGISTER_PC){
-                        registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
+                        registers[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
                         int dest_register = functional_units[instruction->functional_unit].Fi;
                         registers[dest_register].fu = NONE;
                     }
             }
             break ;
         case SPECIAL2:
-            registers_buffer[LOW].data = functional_units[instruction->functional_unit].result[0];
-            registers_buffer[HIGH].data = functional_units[instruction->functional_unit].result[1];
+            registers[LOW].data = functional_units[instruction->functional_unit].result[0];
+            registers[HIGH].data = functional_units[instruction->functional_unit].result[1];
             registers[LOW].fu = NONE;
             registers[HIGH].fu = NONE;
             break;
         default:
             if (functional_units[instruction->functional_unit].Fi != REGISTER_PC){
                 int dest_register = functional_units[instruction->functional_unit].Fi;
-                registers_buffer[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
+                registers[functional_units[instruction->functional_unit].Fi].data = functional_units[instruction->functional_unit].result[0];
                 registers[dest_register].fu = NONE;
             }
     }

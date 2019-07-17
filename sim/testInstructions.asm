@@ -1,4 +1,5 @@
-ADDI $a1, $t1, 0xf
+ADDI $a1, $zero, 0xf
+BGTZ $a1, ola2
 AndI $a1, $t1, 0xf
 beq $a1, $t1, ola
 beql $a1, $t1, ola

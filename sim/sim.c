@@ -16,26 +16,45 @@ void init(FILE* arq){
    fseek(arq, 0, SEEK_SET);
 }
 
-int main(int argc, char **argv){
-   FILE* instructions;
-   char file[100];
-   printf("Digite o nome do arquivo de instruções: ");
-	fgets(file, 99, stdin);
-	file[strlen(file)-1] = '\0';
-   instructions = fopen(file, "r");
-   //init(instructions);
-   load_memory(instructions);
+void initialize_simulator(){
+   output = fopen("instructions.txt", "r");
+   load_memory(output);
    initialize_registers();
    initialize_queue();
    initialize_functional_units();
    initialize_list();
+   fclose(output);
+}
 
-   do {
-       execution_stage();
+void print_registers(){
+   printf("\n");
+   for (int i = 0; i < 34; ++i){
+      printf("Register %d -> %d\t", i, registers[i].data);
+   }
+}
+
+int main(int argc, char **argv){
+   if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")){
+      printf("\n\n -t: traduzir arquivo assembly\n -r | --run: executa o simulador a partir do arquivo traduzido\n\n RODE './sim -t <arquivo assembly> --run' PARA EXECUÇÃO COMPLETA.\n\n");
+      exit(EXIT_FAILURE);
+   }
+   if(argc < 4){
+      printf("Por favor, rode simulação completa.\n");
+      exit(EXIT_FAILURE);
+   } else if (!strcmp(argv[1], "-t") && (!strcmp(argv[3], "-r") || !strcmp(argv[3], "--run"))){
+      printf("cai no if\n");
+      translater(argv[2]);
+      initialize_simulator();
+      do {
+      execution_stage();
       fetch_stage();
       increase_clock();
-      printf("Ciclo: %d\n", get_clock());
-   } while(get_status_queue() == NOT_EMPTY || get_status_list() == NOT_EMPTY);
-     
-   fclose(instructions);
+      print_registers();
+      printf("\nCiclo: %d PC: %d\n", get_clock(), PC.data);
+      getchar();
+      } while(get_status_queue() == NOT_EMPTY || get_status_list() == NOT_EMPTY);
+
+   } else{
+      printf("Por favor, rode simulação completa.\n");
+   }
 }

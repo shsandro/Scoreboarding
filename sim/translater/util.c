@@ -89,7 +89,7 @@ void write_r_instruction(int opcode, int rd, int rs, int rt, int funct){
     rd = rd << 11; instruction = instruction | rd;
     instruction = instruction | funct;
     printf("Instrução %d\n", instruction);
-    fwrite(&instruction, 4, 1, instructions);
+    fwrite(&instruction, 4, 1, output);
 }
 
 void write_i_instruction(int opcode, int rs, int rt, int immediate){
@@ -99,7 +99,7 @@ void write_i_instruction(int opcode, int rs, int rt, int immediate){
     rt = rt << 16; instruction = instruction | rt;
     instruction = instruction | immediate;
     printf("Instrução %d\n", instruction);
-    fwrite(&instruction, 4, 1, instructions);
+    fwrite(&instruction, 4, 1, output);
 }
 
 void write_regimm_instruction(int opcode, int rs, int funct, int offset){
@@ -109,7 +109,7 @@ void write_regimm_instruction(int opcode, int rs, int funct, int offset){
     funct = funct << 16; instruction = instruction | funct;
     instruction = instruction | offset;
     printf("Instrução %d\n", instruction);
-    fwrite(&instruction, 4, 1, instructions);
+    fwrite(&instruction, 4, 1, output);
 }
 
 void write_j_instruction(int opcode, int target){
@@ -117,5 +117,5 @@ void write_j_instruction(int opcode, int target){
     int instruction = opcode; instruction = instruction << 26;
     instruction = instruction | target;
     printf("Instrução %d\n", instruction);
-    fwrite(&instruction, 4, 1, instructions);
+    fwrite(&instruction, 4, 1, output);
 }

@@ -45,39 +45,39 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    ADDI = 258,
-    ANDI = 259,
-    B = 260,
-    BEQ = 261,
-    BEQL = 262,
-    BGTZ = 263,
-    BLEZ = 264,
-    BNE = 265,
-    LUI = 266,
-    ORI = 267,
-    XORI = 268,
-    J = 269,
-    ADD = 270,
-    AND = 271,
-    DIV = 272,
-    JR = 273,
-    MFHI = 274,
-    MFLO = 275,
-    MOVN = 276,
-    MOVZ = 277,
-    MTHI = 278,
-    MTLO = 279,
-    MULT = 280,
-    NOP = 281,
-    NOR = 282,
-    OR = 283,
-    SUB = 284,
-    XOR = 285,
-    MADD = 286,
-    MSUB = 287,
-    MUL = 288,
-    BGEZ = 289,
-    BLTZ = 290,
+    ADDI_TOKEN = 258,
+    ANDI_TOKEN = 259,
+    B_TOKEN = 260,
+    BEQ_TOKEN = 261,
+    BEQL_TOKEN = 262,
+    BGTZ_TOKEN = 263,
+    BLEZ_TOKEN = 264,
+    BNE_TOKEN = 265,
+    LUI_TOKEN = 266,
+    ORI_TOKEN = 267,
+    XORI_TOKEN = 268,
+    JUMP_TOKEN = 269,
+    ADD_TOKEN = 270,
+    AND_TOKEN = 271,
+    DIV_TOKEN = 272,
+    JR_TOKEN = 273,
+    MFHI_TOKEN = 274,
+    MFLO_TOKEN = 275,
+    MOVN_TOKEN = 276,
+    MOVZ_TOKEN = 277,
+    MTHI_TOKEN = 278,
+    MTLO_TOKEN = 279,
+    MULT_TOKEN = 280,
+    NOP_TOKEN = 281,
+    NOR_TOKEN = 282,
+    OR_TOKEN = 283,
+    SUB_TOKEN = 284,
+    XOR_TOKEN = 285,
+    MADD_TOKEN = 286,
+    MSUB_TOKEN = 287,
+    MUL_TOKEN = 288,
+    BGEZ_TOKEN = 289,
+    BLTZ_TOKEN = 290,
     REGISTER = 291,
     IMMEDIATE = 292,
     LABEL = 293,
@@ -91,7 +91,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 16 "translater.y" /* yacc.c:1909  */
+#line 17 "translater.y" /* yacc.c:1909  */
 
   struct R{
     int opcode, rd, rs, rt, shamt, funct;
@@ -99,10 +99,10 @@ union YYSTYPE
   struct I{
     int opcode, rs, rt, immediate;
   }I_instrucition;
-  struct REGIMM{
+  struct REGIMM_R{
     int opcode, rs, funct, offset;
   }REGIMM_Instruction;
-  struct J{
+  struct JUMP{
     int opcode, target;
   }J_Instruction;
   int value;

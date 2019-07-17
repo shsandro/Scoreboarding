@@ -86,6 +86,7 @@ typedef struct{
     int stage;
     int functional_unit;
     int execution_begin;
+    bool comes_from_branch;
     R_Instruction r_instruction;
     I_Instruction i_instruction;
     REGIMM_Instruction regimm_instruction;

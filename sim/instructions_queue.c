@@ -38,7 +38,6 @@ Instruction* get_instruction(){
     } else if (Instructions_Queue->num_instructions == 1){
         Instruction* instruction = Instructions_Queue->instructions_queue[Instructions_Queue->begin];
         Instructions_Queue->instructions_queue[Instructions_Queue->begin] = NULL;
-        printf("retornando um %d na pos %d\n", instruction->opcode, Instructions_Queue->begin);
         Instructions_Queue->end = 0;
         Instructions_Queue->begin = 0;
         Instructions_Queue->num_instructions--;
@@ -48,7 +47,6 @@ Instruction* get_instruction(){
         Instructions_Queue->instructions_queue[Instructions_Queue->begin] = NULL;
         Instructions_Queue->begin++;
         Instructions_Queue->num_instructions--;
-        printf("retornando um %d na pos %d\n", instruction->opcode, Instructions_Queue->begin-1);
         return instruction;
     }
 }

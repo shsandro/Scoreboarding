@@ -663,7 +663,7 @@ char *yytext;
 #include "translater.tab.h"
 #include "hash.h"
 extern int second_pass;
-extern int num_instructions;
+extern int instructions_count;
 #line 668 "lex.yy.c"
 
 #define INITIAL 0
@@ -962,167 +962,167 @@ YY_RULE_SETUP
 case 4:
 YY_RULE_SETUP
 #line 16 "translater.l"
-{yylval.value = 0b000001; return BGEZ;}
+{yylval.value = 0b000001; return BGEZ_TOKEN;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 17 "translater.l"
-{yylval.value = 0b000000; return BLTZ;}
+{yylval.value = 0b000000; return BLTZ_TOKEN;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 19 "translater.l"
-{yylval.value = 0b001000; return ADDI;}
+{yylval.value = 0b001000; return ADDI_TOKEN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 20 "translater.l"
-{yylval.value = 0b001100; return ANDI;}
+{yylval.value = 0b001100; return ANDI_TOKEN;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 21 "translater.l"
-{yylval.value = 0b000100; return B;}
+{yylval.value = 0b000100; return B_TOKEN;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 22 "translater.l"
-{yylval.value = 0b000100; return BEQ;}
+{yylval.value = 0b000100; return BEQ_TOKEN;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 23 "translater.l"
-{yylval.value = 0b010100; return BEQL;}
+{yylval.value = 0b010100; return BEQL_TOKEN;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 24 "translater.l"
-{yylval.value = 0b000111;return BGTZ;}
+{yylval.value = 0b000111;return BGTZ_TOKEN;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 25 "translater.l"
-{yylval.value = 0b000110;return BLEZ;}
+{yylval.value = 0b000110;return BLEZ_TOKEN;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 26 "translater.l"
-{yylval.value = 0b000101; return BNE;}
+{yylval.value = 0b000101; return BNE_TOKEN;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 27 "translater.l"
-{yylval.value = 0b001111; return LUI;}
+{yylval.value = 0b001111; return LUI_TOKEN;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 28 "translater.l"
-{yylval.value = 0b001101; return ORI;}
+{yylval.value = 0b001101; return ORI_TOKEN;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 29 "translater.l"
-{yylval.value = 0b001110; return XORI;}
+{yylval.value = 0b001110; return XORI_TOKEN;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
 #line 31 "translater.l"
-{yylval.value = 0b100000; return ADD;}
+{yylval.value = 0b100000; return ADD_TOKEN;}
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
 #line 32 "translater.l"
-{yylval.value = 0b100100; return AND;}
+{yylval.value = 0b100100; return AND_TOKEN;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 33 "translater.l"
-{yylval.value = 0b011010; return DIV;}
+{yylval.value = 0b011010; return DIV_TOKEN;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 34 "translater.l"
-{yylval.value = 0b001001; return JR;}
+{yylval.value = 0b001001; return JR_TOKEN;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 35 "translater.l"
-{yylval.value = 0b010000; return MFHI;}
+{yylval.value = 0b010000; return MFHI_TOKEN;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 36 "translater.l"
-{yylval.value = 0b010010; return MFLO;}
+{yylval.value = 0b010010; return MFLO_TOKEN;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 37 "translater.l"
-{yylval.value = 0b001011; return MOVN;}
+{yylval.value = 0b001011; return MOVN_TOKEN;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 38 "translater.l"
-{yylval.value = 0b001010; return MOVZ;}
+{yylval.value = 0b001010; return MOVZ_TOKEN;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 39 "translater.l"
-{yylval.value = 0b010001; return MTHI;}
+{yylval.value = 0b010001; return MTHI_TOKEN;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 40 "translater.l"
-{yylval.value = 0b010011; return MTLO;}
+{yylval.value = 0b010011; return MTLO_TOKEN;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 41 "translater.l"
-{yylval.value = 0b011000; return MULT;}
+{yylval.value = 0b011000; return MULT_TOKEN;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 42 "translater.l"
-{yylval.value = 0b000000; return NOP;}
+{yylval.value = 0b000000; return NOP_TOKEN;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 43 "translater.l"
-{yylval.value = 0b100111; return NOR;}
+{yylval.value = 0b100111; return NOR_TOKEN;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 44 "translater.l"
-{yylval.value = 0b100101; return OR;}
+{yylval.value = 0b100101; return OR_TOKEN;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 45 "translater.l"
-{yylval.value = 0b100010; return SUB;}
+{yylval.value = 0b100010; return SUB_TOKEN;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 46 "translater.l"
-{yylval.value = 0b100110; return XOR;}
+{yylval.value = 0b100110; return XOR_TOKEN;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 48 "translater.l"
-{yylval.value = 0b000000; return MADD;}
+{yylval.value = 0b000000; return MADD_TOKEN;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 49 "translater.l"
-{yylval.value = 0b000100; return MSUB;}
+{yylval.value = 0b000100; return MSUB_TOKEN;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 50 "translater.l"
-{yylval.value = 0b000010; return MUL;}
+{yylval.value = 0b000010; return MUL_TOKEN;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 52 "translater.l"
-{yylval.value = 0b000010; return J;}
+{yylval.value = 0b000010; return JUMP_TOKEN;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
@@ -1187,7 +1187,7 @@ YY_RULE_SETUP
 case 49:
 YY_RULE_SETUP
 #line 67 "translater.l"
-{ if(!second_pass){insert_label(strdup(yytext), (num_instructions)*4);printf("achei label %s\n", yytext);} return LABEL;}
+{ if(!second_pass){insert_label(strdup(yytext), (instructions_count)*4);printf("achei label %s\n", yytext);} return LABEL;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
