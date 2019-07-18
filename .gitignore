@@ -1,2 +1,4 @@
 .vscode
 /sim/.vscode
+mips32sim
+*.bin
