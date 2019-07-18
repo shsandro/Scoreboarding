@@ -56,6 +56,7 @@ typedef struct{
     int Fj, Fk; //registradores origem
     int Qj, Qk; //UF dos regstradores que serão lidos
     bool Rj, Rk; //indica se os operandos estão prontos
+    int Vj, Vk; //se os registradores estão, armazena seus valores
     int result[2]; //resultado da operação, pode guardar HIGH e LOW dependendo da operação
 }Functional_Unit;
 

@@ -56,6 +56,7 @@ int second_pass = 0;
 all: 
     | all instruction eol
     | all LABEL eol
+    | all eol
 
 comma:
      | COMMA

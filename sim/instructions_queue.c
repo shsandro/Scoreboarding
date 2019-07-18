@@ -52,6 +52,5 @@ Instruction* get_instruction(){
 }
 
 bool get_status_queue(){
-    printf("num ins queue %d\n", Instructions_Queue->num_instructions);
     return (Instructions_Queue->num_instructions == 0)? EMPTY : NOT_EMPTY;
 }

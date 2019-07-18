@@ -33,7 +33,6 @@ bool remove_scoreboarding(Instruction* instruction){
 }
 
 bool get_status_list(){
-    printf("num ins list %d\n", scoreboarding_list.num_instructions);
     return (scoreboarding_list.num_instructions == 0)? EMPTY : NOT_EMPTY;
 }
 

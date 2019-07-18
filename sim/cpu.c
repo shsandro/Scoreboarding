@@ -18,6 +18,7 @@ Instruction* decode(int data){
             instruction->r_instruction.shamt = (data >> 6) & MASK_REGISTER;
             instruction->r_instruction.funct = data & MASK_TYPE;
             functional_unit = get_functional_unit(instruction->opcode, instruction->r_instruction.funct);
+            printf("uf do nop %d\n", functional_unit);
             instruction->functional_unit = functional_unit;
             printf("-----------------Decodificação-------------------\n");
             printf("SPECIAL: ");

@@ -30,7 +30,6 @@ int main(int argc, char **argv){
       printf("Por favor, rode simulação completa.\n");
       exit(EXIT_FAILURE);
    } else if (!strcmp(argv[1], "-t") && (!strcmp(argv[3], "-r") || !strcmp(argv[3], "--run"))){
-      printf("cai no if\n");
       translater(argv[2]);
       initialize_simulator();
       do {

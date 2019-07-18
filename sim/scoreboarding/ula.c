@@ -26,6 +26,8 @@ void reinitialize_unit(int functional_unit){
     functional_units[functional_unit].Qk = NONE;
     functional_units[functional_unit].Rj = true;
     functional_units[functional_unit].Rk = true;
+    functional_units[functional_unit].Vj = 0;
+    functional_units[functional_unit].Vk = 0;
     functional_units[functional_unit].result[0] = 0;
     functional_units[functional_unit].result[1] = 0;
 }
