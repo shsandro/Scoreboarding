@@ -1816,7 +1816,7 @@ void translater(char* assembly_file)
 {
     input_assembly = fopen(assembly_file, "r");
 
-    output = fopen("instructions.txt", "wr+");
+    output = fopen("output.bin", "wr+");
 
     init_hash();
     yyin = input_assembly;

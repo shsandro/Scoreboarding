@@ -67,5 +67,6 @@ int add_unit(int operation, int operand_1, int operand_2);
 int sub_unit(int operand_1, int operand_2);
 int mul_unit(int operand_1, int operand_2);
 int div_unit(int operation, int operand_1, int operand_2);
+int adder(int operand_1, int operand_2);
 
 #endif

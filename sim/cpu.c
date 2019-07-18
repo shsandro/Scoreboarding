@@ -96,22 +96,22 @@ void fetch_stage(){
             insert_instruction(instruction);
             switch (instruction->opcode) {
                 case REGIMM:
-                    AR.data = PC.data + 4;
-                    PC.data = instruction->regimm_instruction.offset; //salto é tomado aqui
+                    AR.data = adder(PC.data, 4);
+                    PC.data = adder(instruction->regimm_instruction.offset, 0); //salto é tomado aqui
                     break;
                 case J:
-                    PC.data = instruction->j_instruction.target; //salto é tomado aqui
+                    PC.data = adder(instruction->j_instruction.target, 0); //salto é tomado aqui
                     break;
                 case I_BEQ:
                 case I_BEQL:
                 case I_BGTZ:
                 case I_BLEZ:
                 case I_BNE:
-                    AR.data = PC.data + 4;
-                    PC.data = instruction->i_instruction.immediate; //salto é tomado aqui
+                    AR.data = adder(PC.data, 4);
+                    PC.data = adder(instruction->i_instruction.immediate, 0); //salto é tomado aqui
                     break;
                 default:
-                    PC.data += 4;
+                    PC.data = adder(PC.data, 4);
             }
             ++instructions_fetched;
         }

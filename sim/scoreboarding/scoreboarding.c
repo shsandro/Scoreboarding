@@ -38,6 +38,7 @@ void clear_list(){
                 } 
                 free(scoreboarding_list.list[i]);
                 scoreboarding_list.list[i] = NULL;
+                scoreboarding_list.num_instructions--;
         }
     }
 }
@@ -610,13 +611,18 @@ void issue(Instruction* instruction){
 }
 
 void read_operands(Instruction* instruction){
+    //Se vou ler do registrador que estou escrevendo, vai para o read_default
     if (functional_units[instruction->functional_unit].Fj != NONE && functional_units[instruction->functional_unit].Fk != NONE){
+        if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi && functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
         if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     } else if (functional_units[instruction->functional_unit].Fj != NONE){
+        if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi) goto read_default;
         if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
     } else if (functional_units[instruction->functional_unit].Fk != NONE){
+        if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
         if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     }
+    read_default:
     functional_units[instruction->functional_unit].Rj = true;
     functional_units[instruction->functional_unit].Rk = true;
     instruction->stage = EXECUTION;
@@ -657,7 +663,7 @@ void execute(Instruction* instruction){
                     //if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
-                    PC.data = add_unit(OP_ADD, operand_1, operand_2);
+                    PC.data = adder(operand_1, operand_2);
                     clear_queue();
                     clear_list();
                 }
@@ -787,6 +793,8 @@ void execute(Instruction* instruction){
                 case I_MUL:
                 {
                     if (get_clock() != (instruction->execution_begin + MUL_CYCLES)) return;
+                    printf("executei MUL\n");
+                    exit(-1);
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     functional_units[instruction->functional_unit].result[0] = mul_unit(operand_1, operand_2);
@@ -798,7 +806,7 @@ void execute(Instruction* instruction){
             switch (instruction->regimm_instruction.funct) {
                 case I_BGEZ:
                     if (read_register(functional_units[instruction->functional_unit].Fj) < 0){//Salto é tomado se maior ou igual a zero. Se menor devo arrumar PC
-                        PC.data = AR.data;
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
@@ -807,7 +815,7 @@ void execute(Instruction* instruction){
                     break;
                 case I_BLTZ:
                     if (read_register(functional_units[instruction->functional_unit].Fj) >= 0){//Salto é tomado se menor que zero. Se maior ou igual devo arrumar PC
-                        PC.data = AR.data;
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
@@ -840,7 +848,7 @@ void execute(Instruction* instruction){
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
-                        PC.data = AR.data;
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
@@ -853,7 +861,7 @@ void execute(Instruction* instruction){
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
                     if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
-                        PC.data = AR.data;
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
@@ -863,7 +871,7 @@ void execute(Instruction* instruction){
                 break;
                 case I_BGTZ:
                      if (read_register(functional_units[instruction->functional_unit].Fj) <= 0){//salto é tomado se maior que zero. Se é menor ou igual devo arrumar PC
-                        PC.data = AR.data;
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
@@ -872,7 +880,7 @@ void execute(Instruction* instruction){
                     break;
                 case I_BLEZ:
                     if (read_register(functional_units[instruction->functional_unit].Fj) > 0){//salto é tomado se menor ou igual a zero. Se é maior devo arrumar PC
-                        PC.data = AR.data;
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
@@ -883,8 +891,10 @@ void execute(Instruction* instruction){
                 {
                     int operand_1 = read_register(functional_units[instruction->functional_unit].Fj);
                     int operand_2 = read_register(functional_units[instruction->functional_unit].Fk);
+                    printf("%d vs %d\n", operand_1, operand_2);
                     if (operand_1 == operand_2){ //salto é tomado se diferente. Se é igual devo arrumar PC
-                        PC.data = AR.data;
+                        printf("errou\n");
+                        PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list();
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;

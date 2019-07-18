@@ -66,3 +66,8 @@ int div_unit(int operation, int operand_1, int operand_2){
     }
     return (operation == OP_DIV)? (int)(operand_1 / operand_2): operand_1 % operand_2;
 }
+
+/*Incrementa PC e AR*/
+int adder(int operand_1, int operand_2){
+    return operand_1 + operand_2;
+}
