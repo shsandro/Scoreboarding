@@ -1,5 +1,7 @@
 #include"cpu.h"
 
+int instructions_issued = 0;
+
 /*Decodifica uma instrução*/
 Instruction* decode(int data){
     printf("instruction %d\n", data);
@@ -115,6 +117,7 @@ void fetch_stage(){
                     PC.data = adder(PC.data, 4);
             }
             ++instructions_fetched;
+            ++instructions_issued;
         }
     }
 }

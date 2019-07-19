@@ -10,6 +10,7 @@
 #include "./translater/integration.h"
 #include "./translater/translater.tab.h"
 #include <string.h>
+#include "./scoreboarding/scoreboarding.h"
 
 extern int num_instructions;
 extern int finish_PC;

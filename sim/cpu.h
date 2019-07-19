@@ -9,6 +9,7 @@
 #include "sim.h"
 #include "./scoreboarding/scoreboarding.h"
 
+int instructions_issued;
 void fetch_stage();
 void execution_stage();
 void write_back_stage();

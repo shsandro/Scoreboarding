@@ -1,5 +1,5 @@
 
-addi $t0, $zero, 0x4
+addi $t0, $zero, 0x0
 addi $t1, $zero, 0x0
 add $a0, $zero, $zero
 add $a1, $zero, $zero

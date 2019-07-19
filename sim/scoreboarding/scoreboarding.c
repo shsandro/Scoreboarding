@@ -1,7 +1,11 @@
 #include "scoreboarding.h"
 
+int instructions_written = 0;
+int branches_taken = 0;
+int branches_hit = 0;
+int branches_miss = 0;
 bool ISSUED = true;
-int BRANCH_PREDICTION = true;
+// int BRANCH_PREDICTION = true;
 
 /*Recebe uma operação e devolve que tipo de unidade funcional pode executá-la*/
 int get_functional_unit(int opcode, int operation){
@@ -658,6 +662,8 @@ void execute(Instruction* instruction){
                 break;
                 case I_JR:
                 {
+                    ++branches_taken;
+                    ++branches_hit;
                     //if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
@@ -801,25 +807,31 @@ void execute(Instruction* instruction){
         case REGIMM:
             switch (instruction->regimm_instruction.funct) {
                 case I_BGEZ:
+                    ++branches_taken;
                     if (functional_units[instruction->functional_unit].Vj < 0){//Salto é tomado se maior ou igual a zero. Se menor devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
-                    }
+                    }else ++branches_hit;
                     break;
                 case I_BLTZ:
+                    ++branches_taken;
                     if (functional_units[instruction->functional_unit].Vj >= 0){//Salto é tomado se menor que zero. Se maior ou igual devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->regimm_instruction.offset, PC.data);
-                    }
+                    }else ++branches_hit;
             }
             break;
         case J:
+            ++branches_taken;
+            ++branches_hit;
             //PC já foi atualizado na fase de ISSUE
             // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
             break;
@@ -841,61 +853,70 @@ void execute(Instruction* instruction){
                 break;
                 case I_BEQ:
                 {
+                    ++branches_taken;
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
                     if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    }
+                    }else ++branches_hit;
                 }    
                 break;
                 case I_BEQL:
                 {
+                    ++branches_taken;
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
                     if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    }
+                    }else ++branches_hit;
                 }    
                 break;
                 case I_BGTZ:
+                    ++branches_taken;
                      if (functional_units[instruction->functional_unit].Vj <= 0){//salto é tomado se maior que zero. Se é menor ou igual devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    }
+                    }else ++branches_hit;
                     break;
                 case I_BLEZ:
+                    ++branches_taken;
                     if (functional_units[instruction->functional_unit].Vj > 0){//salto é tomado se menor ou igual a zero. Se é maior devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    }
+                    }else ++branches_hit;
                     break;
                 case I_BNE:
                 {
+                    ++branches_taken;
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
-                    printf("%d vs %d\n", operand_1, operand_2);
                     if (operand_1 == operand_2){ //salto é tomado se diferente. Se é igual devo arrumar PC
                         printf("errou\n");
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
+                        ++branches_miss;
                         // if (get_clock() != (instruction->execution_begin + BRANCH_CYCLES)) return;
                         // functional_units[instruction->functional_unit].result[0] = add_unit(OP_ADD, instruction->i_instruction.immediate, PC.data);
-                    }
+                    }else ++branches_hit;
                 }    
                 break;
                 case I_LUI:
@@ -934,7 +955,6 @@ void execute(Instruction* instruction){
 // }
 
 void write_back(Instruction* instruction){
-    printf("entrei write back\n");
     switch (instruction->opcode) {
         case SPECIAL:
             switch (instruction->r_instruction.funct){
@@ -981,4 +1001,5 @@ void write_back(Instruction* instruction){
     reinitialize_unit(instruction->functional_unit);
     remove_scoreboarding(instruction);
     free(instruction);
+    ++instructions_written;
 }
