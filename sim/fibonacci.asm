@@ -1,3 +1,4 @@
+add $s0, $s0, $zero
 addi $t0, $zero, 0x5
 addi $t1, $zero, 0x0
 add $a0, $zero, $zero

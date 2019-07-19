@@ -606,7 +606,11 @@ void read_operands(Instruction* instruction){
     //Se vou ler do registrador que estou escrevendo, vai para o read_default
     if (functional_units[instruction->functional_unit].Fj != NONE && functional_units[instruction->functional_unit].Fk != NONE){
         if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi && functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
-        if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+        else if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi){
+            if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+        } else if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi){
+            if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
+        } else if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     } else if (functional_units[instruction->functional_unit].Fj != NONE){
         if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi) goto read_default;
         if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;

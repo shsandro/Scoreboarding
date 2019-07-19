@@ -34,6 +34,7 @@ void read_operands(Instruction* instruction);
 void execute(Instruction* instruction);
 void write_back(Instruction* instruction);
 int get_functional_unit(int opcode, int operation);
-void clear_list();
+void bypass(int result_register);
+void clear_list(Instruction* instruction);
 
 #endif
