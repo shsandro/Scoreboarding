@@ -1,10 +1,9 @@
-add $s0, $s0, $zero
-addi $t0, $zero, 0x5
+
+addi $t0, $zero, 0x4
 addi $t1, $zero, 0x0
 add $a0, $zero, $zero
 add $a1, $zero, $zero
 addi $a2, $zero, 0x1
-madd $t0, $a2
 beq $t0, $zero, end
 loop:
 addi $t1, $t1, 0x1

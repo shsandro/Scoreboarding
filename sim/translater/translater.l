@@ -56,7 +56,7 @@ extern int instructions_count;
 "$"[v][0-1] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$"[a][0-3] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$"[t][0-9] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
-"$"[s][0-7] { yylval.value = get_register(yytext[1], yytext[2]); printf("register %d\n", yylval.value); return REGISTER; }
+"$"[s][0-7] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$"[k][0-1] { yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 "$gp" { yylval.value = 28; return REGISTER; }
 "$sp" { yylval.value = 29; return REGISTER; }

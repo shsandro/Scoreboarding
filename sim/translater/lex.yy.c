@@ -1152,7 +1152,7 @@ YY_RULE_SETUP
 case 42:
 YY_RULE_SETUP
 #line 59 "translater.l"
-{ yylval.value = get_register(yytext[1], yytext[2]); printf("register %d\n", yylval.value); return REGISTER; }
+{ yylval.value = get_register(yytext[1], yytext[2]); return REGISTER; }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
