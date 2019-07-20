@@ -23,7 +23,7 @@ void print_registers(){
 
 int main(int argc, char **argv){
    if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help")){
-      printf("\n\n -t: traduzir arquivo assembly\n -r | --run: executa o simulador a partir do arquivo traduzido\n\n RODE './sim -t <arquivo assembly> --run' PARA EXECUÇÃO COMPLETA.\n\n");
+      printf("\n\n -t: traduzir arquivo assembly\n -r | --run: executa o simulador a partir do arquivo traduzido\n\n RODE './mips32sim -t <arquivo assembly> --run' PARA EXECUÇÃO COMPLETA.\n\n");
       exit(EXIT_FAILURE);
    }
    if(argc < 4){
