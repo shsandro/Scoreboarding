@@ -1,5 +1,6 @@
 #include "util.h"
 
+/*Retorna o número de um registrador*/
 int get_register(char c, char i){
     switch (c)
     {
@@ -81,6 +82,7 @@ int get_register(char c, char i){
     }
 }
 
+/*Escreve uma instrução dto tipo R no arquivo output.bin*/
 void write_r_instruction(int opcode, int rd, int rs, int rt, int funct){
     printf("Escrevendo uma R\n");
     int instruction = opcode; instruction = instruction << 26;
@@ -92,6 +94,7 @@ void write_r_instruction(int opcode, int rd, int rs, int rt, int funct){
     fwrite(&instruction, 4, 1, output);
 }
 
+/*Escreve uma instrução dto tipo I no arquivo output.bin*/
 void write_i_instruction(int opcode, int rs, int rt, int immediate){
     printf("Escrevendo uma I\n");
     int instruction = opcode; instruction = instruction << 26;
@@ -102,6 +105,7 @@ void write_i_instruction(int opcode, int rs, int rt, int immediate){
     fwrite(&instruction, 4, 1, output);
 }
 
+/*Escreve uma instrução dto tipo REGIMM no arquivo output.bin*/
 void write_regimm_instruction(int opcode, int rs, int funct, int offset){
     printf("Escrevendo uma Regimm\n");
     int instruction = opcode; instruction = instruction << 26;
@@ -112,6 +116,7 @@ void write_regimm_instruction(int opcode, int rs, int funct, int offset){
     fwrite(&instruction, 4, 1, output);
 }
 
+/*Escreve uma instrução dto tipo J no arquivo output.bin*/
 void write_j_instruction(int opcode, int target){
     printf("Escrevendo uma J\n");
     int instruction = opcode; instruction = instruction << 26;

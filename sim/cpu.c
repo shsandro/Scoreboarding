@@ -4,7 +4,7 @@ int instructions_issued = 0;
 
 /*Decodifica uma instrução*/
 Instruction* decode(int data){
-    printf("instruction %d\n", data);
+    printf("Instrução inteira: %d\n", data);
     Instruction *instruction = (Instruction*)malloc(sizeof(Instruction));
     int instruction_type = (data >> 26) & MASK_TYPE;
     instruction->opcode = instruction_type;
@@ -20,13 +20,12 @@ Instruction* decode(int data){
             instruction->r_instruction.shamt = (data >> 6) & MASK_REGISTER;
             instruction->r_instruction.funct = data & MASK_TYPE;
             functional_unit = get_functional_unit(instruction->opcode, instruction->r_instruction.funct);
-            printf("uf do nop %d\n", functional_unit);
             instruction->functional_unit = functional_unit;
             printf("-----------------Decodificação-------------------\n");
             printf("SPECIAL: ");
             printf("%d %d %d %d %d\n", instruction->opcode, instruction->r_instruction.rs, instruction->r_instruction.rt, instruction->r_instruction.rd, instruction->r_instruction.funct);
             printf("FU: %d\n", functional_unit);
-            printf("-------------------------------------------------\n");
+            printf("-------------------------------------------------\n\n");
         }
             break;
         case SPECIAL2:
@@ -42,7 +41,7 @@ Instruction* decode(int data){
             printf("SPECIAL2: ");
             printf("%d %d %d %d %d\n", instruction->opcode, instruction->r_instruction.rs, instruction->r_instruction.rt, instruction->r_instruction.rd, instruction->r_instruction.funct);
             printf("FU: %d\n", functional_unit);
-            printf("-------------------------------------------------\n");
+            printf("-------------------------------------------------\n\n");
         }
             break;
         case REGIMM:
@@ -56,7 +55,7 @@ Instruction* decode(int data){
             printf("REGIMM: ");
             printf("%d %d %d %d\n", instruction->opcode, instruction->regimm_instruction.rs, instruction->regimm_instruction.funct, instruction->regimm_instruction.offset);
             printf("FU: %d\n", functional_unit);
-            printf("-------------------------------------------------\n");
+            printf("-------------------------------------------------\n\n");
         }
             break;
         case J:
@@ -68,7 +67,7 @@ Instruction* decode(int data){
             printf("J: ");
             printf("%d %d\n", instruction->opcode, instruction->j_instruction.target);
             printf("FU: %d\n", functional_unit);
-            printf("-------------------------------------------------\n");
+            printf("-------------------------------------------------\n\n");
         }
             break;
         default:
@@ -82,7 +81,7 @@ Instruction* decode(int data){
             printf("IMMEDIATE: ");
             printf("%d %d %d %d\n", instruction->opcode, instruction->i_instruction.rs, instruction->i_instruction.rt, instruction->i_instruction.immediate);
             printf("FU: %d\n", functional_unit);
-            printf("-------------------------------------------------\n");
+            printf("-------------------------------------------------\n\n");
         }
     }
     return instruction;
@@ -122,6 +121,7 @@ void fetch_stage(){
     }
 }
 
+/*Busca uma instrução na fila de instruções emitidas e executa o scoreboarding. Dentro desse estágio também é realizada a escrita*/
 void execution_stage(){
     if (get_status_queue() == NOT_EMPTY || get_status_list() == NOT_EMPTY){
         scoreboarding();

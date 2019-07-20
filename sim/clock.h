@@ -6,7 +6,7 @@
 int clock;
 int finish_clock;
 
-void init_clock();
+void initalize_clock();
 void increase_clock();
 void end_clock();
 int get_clock();

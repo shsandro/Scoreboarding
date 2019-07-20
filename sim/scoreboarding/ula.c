@@ -1,5 +1,6 @@
 #include "ula.h"
 
+/*Inicializa as UF com os valores default*/
 void initialize_functional_units(){
     for (int i = 0; i < 6; ++i){
         functional_units[i].busy = false;
@@ -16,6 +17,7 @@ void initialize_functional_units(){
     }
 }
 
+/*Seta todos os campos de uma UF para os valores default*/
 void reinitialize_unit(int functional_unit){
     functional_units[functional_unit].busy = false;
     functional_units[functional_unit].operation = NONE;

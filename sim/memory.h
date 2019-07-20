@@ -20,7 +20,6 @@ typedef struct{
 /*Declaração da memória*/
 Memory memory;
 
-/*Assinatura das funções de memória*/
 void load_memory(FILE* instructions);
 int write_mem(Word w, int address);
 void next_mem();

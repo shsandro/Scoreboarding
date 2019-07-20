@@ -1815,6 +1815,7 @@ yyreturn:
 #line 109 "translater.y" /* yacc.c:1906  */
 
 
+/*Realiza a tradução do arquivo assembly. Gera como saída o arquivo binario output.bin. Foi escrito com Flex & Bison*/
 void translater(char* assembly_file)
 {
     input_assembly = fopen(assembly_file, "r");
@@ -1823,14 +1824,16 @@ void translater(char* assembly_file)
 
     init_hash();
     yyin = input_assembly;
+    printf("Identificando labels...\n\n");
     yyparse();
     rewind(input_assembly);
     second_pass = 1;
     instructions_count = 0;
-    printf("\nComeçando segunda passada\n\n");
+    printf("Traduzindo...\n\n");
     yyparse();
     fclose(input_assembly);
     fclose(output);
+    printf("Sucesso na tradução!\n\n");
 }
 
 void yyerror(const char *s) {

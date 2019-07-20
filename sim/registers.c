@@ -1,5 +1,4 @@
 #include "registers.h"
-#include "clock.h"
 
 /*Inicializa registradores*/
 void initialize_registers(){
