@@ -112,6 +112,11 @@ j_instruction: JUMP_TOKEN LABEL {$$.opcode = $1; $$.target = $2;}
 void translater(char* assembly_file)
 {
     input_assembly = fopen(assembly_file, "r");
+    
+    if(!input_assembly){
+      printf("Arquivo inexistente.\n");
+      exit(-1);
+    }
 
     output = fopen("output.bin", "wr+");
 

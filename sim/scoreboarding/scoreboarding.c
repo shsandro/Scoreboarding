@@ -5,7 +5,6 @@ int branches_taken = 0;
 int branches_hit = 0;
 int branches_miss = 0;
 bool ISSUED = true;
-// int BRANCH_PREDICTION = true;
 
 /*Recebe uma operação e devolve que tipo de unidade funcional pode executá-la*/
 int get_functional_unit(int opcode, int operation){
@@ -174,6 +173,7 @@ int wait(int functional_unit, int destiny){
     }
 }
 
+/*Realiza a emissão de uma instrução dentro do scoreboarding e em seguida a manda para a leitura de operandos*/
 void issue(Instruction* instruction){
     int available_functional_unit;
     switch (instruction->opcode){
@@ -606,21 +606,22 @@ void issue(Instruction* instruction){
     instruction->stage = READ_OPERANDS;
 }
 
+/*Realiza a leitura dos registradores origem de uma instrução e em seguida a manda para a execução*/
 void read_operands(Instruction* instruction){
     //Se vou ler do registrador que estou escrevendo, vai para o read_default
     if (functional_units[instruction->functional_unit].Fj != NONE && functional_units[instruction->functional_unit].Fk != NONE){
-        if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi && functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
-        else if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi){
-            if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
-        } else if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi){
-            if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
-        } else if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
-    } else if (functional_units[instruction->functional_unit].Fj != NONE){
-        if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi) goto read_default;
-        if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
-    } else if (functional_units[instruction->functional_unit].Fk != NONE){
-        if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
+    if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi && functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
+    else if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi){
         if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+    } else if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi){
+        if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
+    } else if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+    } else if (functional_units[instruction->functional_unit].Fj != NONE){
+    if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi) goto read_default;
+    if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
+    } else if (functional_units[instruction->functional_unit].Fk != NONE){
+    if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
+    if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     }
     read_default:
     functional_units[instruction->functional_unit].Rj = true;
@@ -630,6 +631,23 @@ void read_operands(Instruction* instruction){
     instruction->stage = EXECUTION;
 }
 
+void bypass(int dest_register, int data){
+    printf("entrei no bypass\n");
+    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        if (scoreboarding_list.list[i] == NULL) continue;
+        if (functional_units[scoreboarding_list.list[i]->functional_unit].Fj == dest_register){
+            functional_units[scoreboarding_list.list[i]->functional_unit].Rj = true;
+            functional_units[scoreboarding_list.list[i]->functional_unit].Vj = data;
+            printf("usei\n");
+        if (functional_units[scoreboarding_list.list[i]->functional_unit].Fk == dest_register) {
+            functional_units[scoreboarding_list.list[i]->functional_unit].Rk = true;
+            functional_units[scoreboarding_list.list[i]->functional_unit].Vk = data;
+            printf("usei\n");
+        }
+    }
+}
+
+/*Executa uma instrução e em seguida a envia para o estagio de write back*/
 void execute(Instruction* instruction){
     if (instruction->execution_begin == NONE) instruction->execution_begin = get_clock();
     switch (instruction->opcode){
@@ -856,6 +874,7 @@ void execute(Instruction* instruction){
                     ++branches_taken;
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
+                    printf("valores comparados %d %d\n", operand_1, operand_2);
                     if (operand_1 != operand_2){//salto é tomado se igual. Se diferente devo arrumar PC
                         PC.data = adder(AR.data, 0);
                         clear_queue();
@@ -909,7 +928,6 @@ void execute(Instruction* instruction){
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
                     if (operand_1 == operand_2){ //salto é tomado se diferente. Se é igual devo arrumar PC
-                        printf("errou\n");
                         PC.data = adder(AR.data, 0);
                         clear_queue();
                         clear_list(instruction);
@@ -939,6 +957,7 @@ void execute(Instruction* instruction){
                 break;
             }        
     }
+    bypass(functional_units[instruction->functional_unit].Fi, functional_units[instruction->functional_unit].result[0]);
     instruction->stage = WRITE_BACK;
 }
 
@@ -954,6 +973,7 @@ void execute(Instruction* instruction){
 //     return false;
 // }
 
+/*Realiza a escrita da instrução no registrador destino e libera o registrador e a UF*/
 void write_back(Instruction* instruction){
     switch (instruction->opcode) {
         case SPECIAL:
@@ -983,8 +1003,6 @@ void write_back(Instruction* instruction){
                 }
                     break;
                 default:
-                    // printf("MADD \n");
-                    // exit(EXIT_FAILURE);
                     registers[HIGH].data = functional_units[instruction->functional_unit].result[0];
                     registers[LOW].data = functional_units[instruction->functional_unit].result[1];
                     registers[LOW].fu = NONE;
