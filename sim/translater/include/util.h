@@ -3,8 +3,12 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "translater.tab.h"
-#include "integration.h"
+#include "../translater.tab.h"
+#include "../integration.h"
+
+void translater(char* assembly_file);
+int yyerror(char *s);
+int yylex();
 
 int get_register(char c, char i);
 void write_r_instruction(int opcode, int rd, int rs, int rt, int funct);

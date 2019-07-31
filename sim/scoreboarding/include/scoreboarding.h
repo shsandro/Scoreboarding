@@ -1,12 +1,12 @@
 #ifndef SCOREBOARDING_H
 #define SCOREBOARDING_H
 
-#include "../registers.h"
-#include "../instructions.h"
-#include "../clock.h"
-#include "ula.h"
-#include "../instructions_queue.h"
 #include "scoreboarding_list.h"
+#include "ula.h"
+#include "../../include/registers.h"
+#include "../../include/instructions.h"
+#include "../../include/clock.h"
+#include "../../include/instructions_queue.h"
 #include <stdbool.h>
 
 /*Estágios do scoreboarding*/

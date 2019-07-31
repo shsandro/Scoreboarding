@@ -1,7 +1,8 @@
 %{
-#include "util.h"
-#include "hash.h"
+#include "./include/util.h"
+#include "./include/hash.h"
 #include "integration.h"
+#include <unistd.h>
 
 #define SPECIAL_OPCODE 0b000000
 #define SPECIAL2_OPCODE 0b011100
@@ -54,20 +55,20 @@ int second_pass = 0;
 %%
 
 all: 
-    | all instruction eol
-    | all LABEL eol
-    | all eol
+    | all instruction eol {printf("cai em: all instruction eol\n");}
+    | all LABEL eol {printf("cai em: all LBAEL eol\n");}
+    | all eol {printf("cai em: all eol\n");}
 
 comma:
-     | COMMA
+     | COMMA {printf("cai em: COMMA\n");}
 
 eol:
-  | eol EOL
+    |eol EOL {printf("cai em: eol EOL\n");}
 
-instruction: r_instruction {if(second_pass){instructions_count++; write_r_instruction($1.opcode, $1.rd, $1.rs, $1.rt, $1.funct);}else{instructions_count++;}}
-           | i_instruction {if(second_pass){instructions_count++; write_i_instruction($1.opcode, $1.rs, $1.rt, $1.immediate);}else{instructions_count++;}}
-           | regimm_instruction {if(second_pass){instructions_count++; write_regimm_instruction($1.opcode, $1.rs, $1.funct, $1.offset);}else{instructions_count++;}}
-           | j_instruction {if(second_pass){instructions_count++; write_j_instruction($1.opcode, $1.target);}else{instructions_count++;}}
+instruction: r_instruction {if(second_pass){instructions_count++; write_r_instruction($1.opcode, $1.rd, $1.rs, $1.rt, $1.funct);}else{instructions_count++; printf("cai na regra R\n");}}
+           | i_instruction {if(second_pass){instructions_count++; write_i_instruction($1.opcode, $1.rs, $1.rt, $1.immediate);}else{instructions_count++; printf("cai na regra I\n");}}
+           | regimm_instruction {if(second_pass){instructions_count++; write_regimm_instruction($1.opcode, $1.rs, $1.funct, $1.offset);}else{instructions_count++; printf("cai na regra Regimm\n");}}
+           | j_instruction {if(second_pass){instructions_count++; write_j_instruction($1.opcode, $1.target);}else{instructions_count++; printf("cai na regra J\n");}}
 
 r_instruction: ADD_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
             | AND_TOKEN REGISTER comma REGISTER comma REGISTER {$$.opcode = SPECIAL_OPCODE; $$.rd = $2; $$.rs = $4; $$.rt = $6; $$.shamt = 0; $$.funct = $1;}
@@ -109,12 +110,11 @@ j_instruction: JUMP_TOKEN LABEL {$$.opcode = $1; $$.target = $2;}
 %%
 
 /*Realiza a tradução do arquivo assembly. Gera como saída o arquivo binario output.bin. Foi escrito com Flex & Bison*/
-void translater(char* assembly_file)
-{
+void translater(char* assembly_file) {
     input_assembly = fopen(assembly_file, "r");
     
     if(!input_assembly){
-      printf("Arquivo inexistente.\n");
+      printf("Arquivo '%s' inexistente.\n", assembly_file);
       exit(-1);
     }
 
@@ -134,7 +134,7 @@ void translater(char* assembly_file)
     printf("Sucesso na tradução!\n\n");
 }
 
-void yyerror(const char *s) {
+int yyerror(char *s) {
   printf("EEK, parse error! Message: %s\n", s);
   // might as well halt now:
   exit(-1);

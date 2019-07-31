@@ -1,4 +1,4 @@
-#include "scoreboarding_list.h"
+#include "./include/scoreboarding_list.h"
 
 /*Incicializa a fila/barramento de instruções do scoreboarding*/
 void initialize_list(){

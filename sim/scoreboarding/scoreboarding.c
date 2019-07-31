@@ -1,4 +1,4 @@
-#include "scoreboarding.h"
+#include "./include/scoreboarding.h"
 
 int instructions_written = 0;
 int branches_taken = 0;
@@ -639,6 +639,7 @@ void bypass(int dest_register, int data){
             functional_units[scoreboarding_list.list[i]->functional_unit].Rj = true;
             functional_units[scoreboarding_list.list[i]->functional_unit].Vj = data;
             printf("usei\n");
+        }
         if (functional_units[scoreboarding_list.list[i]->functional_unit].Fk == dest_register) {
             functional_units[scoreboarding_list.list[i]->functional_unit].Rk = true;
             functional_units[scoreboarding_list.list[i]->functional_unit].Vk = data;
@@ -674,8 +675,8 @@ void execute(Instruction* instruction){
                     if (get_clock() != (instruction->execution_begin + DIV_CYCLES)) return;
                     int operand_1 = functional_units[instruction->functional_unit].Vj;
                     int operand_2 = functional_units[instruction->functional_unit].Vk;
-                    functional_units[instruction->functional_unit].result[0] = div_unit(OP_DIV, operand_1, operand_2);
-                    functional_units[instruction->functional_unit].result[1] = div_unit(OP_MOD, operand_1, operand_2);
+                    functional_units[instruction->functional_unit].result[0] = div_unit(OP_MOD, operand_1, operand_2);
+                    functional_units[instruction->functional_unit].result[1] = div_unit(OP_DIV, operand_1, operand_2);
                 }    
                 break;
                 case I_JR:
@@ -957,7 +958,7 @@ void execute(Instruction* instruction){
                 break;
             }        
     }
-    bypass(functional_units[instruction->functional_unit].Fi, functional_units[instruction->functional_unit].result[0]);
+    // bypass(functional_units[instruction->functional_unit].Fi, functional_units[instruction->functional_unit].result[0]);
     instruction->stage = WRITE_BACK;
 }
 
@@ -980,10 +981,10 @@ void write_back(Instruction* instruction){
             switch (instruction->r_instruction.funct){
                 case I_DIV:
                 case I_MULT:
-                    registers[LOW].data = functional_units[instruction->functional_unit].result[0];
-                    registers[HIGH].data = functional_units[instruction->functional_unit].result[1];
-                    registers[LOW].fu = NONE;
+                    registers[HIGH].data = functional_units[instruction->functional_unit].result[0];
+                    registers[LOW].data = functional_units[instruction->functional_unit].result[1];
                     registers[HIGH].fu = NONE;
+                    registers[LOW].fu = NONE;
                     break;
                 default:
                     if (functional_units[instruction->functional_unit].Fi != REGISTER_PC){

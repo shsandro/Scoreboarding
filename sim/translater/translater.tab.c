@@ -64,9 +64,10 @@
 /* Copy the first part of user declarations.  */
 #line 1 "translater.y" /* yacc.c:339  */
 
-#include "util.h"
-#include "hash.h"
+#include "./include/util.h"
+#include "./include/hash.h"
 #include "integration.h"
+#include <unistd.h>
 
 #define SPECIAL_OPCODE 0b000000
 #define SPECIAL2_OPCODE 0b011100
@@ -78,7 +79,7 @@ extern FILE *output;
 int instructions_count = 0;
 int second_pass = 0;
 
-#line 82 "translater.tab.c" /* yacc.c:339  */
+#line 83 "translater.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -159,7 +160,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "translater.y" /* yacc.c:355  */
+#line 18 "translater.y" /* yacc.c:355  */
 
   struct R{
     int opcode, rd, rs, rt, shamt, funct;
@@ -176,7 +177,7 @@ union YYSTYPE
   int value;
   char *str;
 
-#line 180 "translater.tab.c" /* yacc.c:355  */
+#line 181 "translater.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -193,7 +194,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 197 "translater.tab.c" /* yacc.c:358  */
+#line 198 "translater.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -494,11 +495,11 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    56,    56,    57,    58,    59,    61,    62,    64,    65,
-      67,    68,    69,    70,    72,    73,    74,    75,    76,    77,
-      78,    79,    80,    81,    82,    83,    84,    85,    86,    87,
-      88,    89,    90,    92,    93,    94,    95,    96,    97,    98,
-      99,   100,   101,   102,   104,   105,   107
+       0,    57,    57,    58,    59,    60,    62,    63,    65,    66,
+      68,    69,    70,    71,    73,    74,    75,    76,    77,    78,
+      79,    80,    81,    82,    83,    84,    85,    86,    87,    88,
+      89,    90,    91,    93,    94,    95,    96,    97,    98,    99,
+     100,   101,   102,   103,   105,   106,   108
 };
 #endif
 
@@ -1361,230 +1362,260 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-        case 10:
-#line 67 "translater.y" /* yacc.c:1646  */
-    {if(second_pass){instructions_count++; write_r_instruction((yyvsp[0].R_Instruction).opcode, (yyvsp[0].R_Instruction).rd, (yyvsp[0].R_Instruction).rs, (yyvsp[0].R_Instruction).rt, (yyvsp[0].R_Instruction).funct);}else{instructions_count++;}}
-#line 1368 "translater.tab.c" /* yacc.c:1646  */
+        case 3:
+#line 58 "translater.y" /* yacc.c:1646  */
+    {printf("cai em: all instruction eol\n");}
+#line 1369 "translater.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 4:
+#line 59 "translater.y" /* yacc.c:1646  */
+    {printf("cai em: all LBAEL eol\n");}
+#line 1375 "translater.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 5:
+#line 60 "translater.y" /* yacc.c:1646  */
+    {printf("cai em: all eol\n");}
+#line 1381 "translater.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 7:
+#line 63 "translater.y" /* yacc.c:1646  */
+    {printf("cai em: COMMA\n");}
+#line 1387 "translater.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 9:
+#line 66 "translater.y" /* yacc.c:1646  */
+    {printf("cai em: eol EOL\n");}
+#line 1393 "translater.tab.c" /* yacc.c:1646  */
+    break;
+
+  case 10:
+#line 68 "translater.y" /* yacc.c:1646  */
+    {if(second_pass){instructions_count++; write_r_instruction((yyvsp[0].R_Instruction).opcode, (yyvsp[0].R_Instruction).rd, (yyvsp[0].R_Instruction).rs, (yyvsp[0].R_Instruction).rt, (yyvsp[0].R_Instruction).funct);}else{instructions_count++; printf("cai na regra R\n");}}
+#line 1399 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 68 "translater.y" /* yacc.c:1646  */
-    {if(second_pass){instructions_count++; write_i_instruction((yyvsp[0].I_instrucition).opcode, (yyvsp[0].I_instrucition).rs, (yyvsp[0].I_instrucition).rt, (yyvsp[0].I_instrucition).immediate);}else{instructions_count++;}}
-#line 1374 "translater.tab.c" /* yacc.c:1646  */
+#line 69 "translater.y" /* yacc.c:1646  */
+    {if(second_pass){instructions_count++; write_i_instruction((yyvsp[0].I_instrucition).opcode, (yyvsp[0].I_instrucition).rs, (yyvsp[0].I_instrucition).rt, (yyvsp[0].I_instrucition).immediate);}else{instructions_count++; printf("cai na regra I\n");}}
+#line 1405 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 69 "translater.y" /* yacc.c:1646  */
-    {if(second_pass){instructions_count++; write_regimm_instruction((yyvsp[0].REGIMM_Instruction).opcode, (yyvsp[0].REGIMM_Instruction).rs, (yyvsp[0].REGIMM_Instruction).funct, (yyvsp[0].REGIMM_Instruction).offset);}else{instructions_count++;}}
-#line 1380 "translater.tab.c" /* yacc.c:1646  */
+#line 70 "translater.y" /* yacc.c:1646  */
+    {if(second_pass){instructions_count++; write_regimm_instruction((yyvsp[0].REGIMM_Instruction).opcode, (yyvsp[0].REGIMM_Instruction).rs, (yyvsp[0].REGIMM_Instruction).funct, (yyvsp[0].REGIMM_Instruction).offset);}else{instructions_count++; printf("cai na regra Regimm\n");}}
+#line 1411 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 70 "translater.y" /* yacc.c:1646  */
-    {if(second_pass){instructions_count++; write_j_instruction((yyvsp[0].J_Instruction).opcode, (yyvsp[0].J_Instruction).target);}else{instructions_count++;}}
-#line 1386 "translater.tab.c" /* yacc.c:1646  */
+#line 71 "translater.y" /* yacc.c:1646  */
+    {if(second_pass){instructions_count++; write_j_instruction((yyvsp[0].J_Instruction).opcode, (yyvsp[0].J_Instruction).target);}else{instructions_count++; printf("cai na regra J\n");}}
+#line 1417 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 72 "translater.y" /* yacc.c:1646  */
+#line 73 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1392 "translater.tab.c" /* yacc.c:1646  */
+#line 1423 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 73 "translater.y" /* yacc.c:1646  */
+#line 74 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1398 "translater.tab.c" /* yacc.c:1646  */
+#line 1429 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 74 "translater.y" /* yacc.c:1646  */
+#line 75 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-3].value);}
-#line 1404 "translater.tab.c" /* yacc.c:1646  */
+#line 1435 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 75 "translater.y" /* yacc.c:1646  */
+#line 76 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[0].value); (yyval.R_Instruction).rt = 0; (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-1].value);}
-#line 1410 "translater.tab.c" /* yacc.c:1646  */
+#line 1441 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 76 "translater.y" /* yacc.c:1646  */
+#line 77 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[0].value); (yyval.R_Instruction).rs = 0; (yyval.R_Instruction).rt = 0; (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-1].value);}
-#line 1416 "translater.tab.c" /* yacc.c:1646  */
+#line 1447 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 77 "translater.y" /* yacc.c:1646  */
+#line 78 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[0].value); (yyval.R_Instruction).rs = 0; (yyval.R_Instruction).rt = 0; (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-1].value);}
-#line 1422 "translater.tab.c" /* yacc.c:1646  */
+#line 1453 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 78 "translater.y" /* yacc.c:1646  */
+#line 79 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1428 "translater.tab.c" /* yacc.c:1646  */
+#line 1459 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 79 "translater.y" /* yacc.c:1646  */
+#line 80 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1434 "translater.tab.c" /* yacc.c:1646  */
+#line 1465 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 80 "translater.y" /* yacc.c:1646  */
+#line 81 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[0].value); (yyval.R_Instruction).rt = 0; (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-1].value);}
-#line 1440 "translater.tab.c" /* yacc.c:1646  */
+#line 1471 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 81 "translater.y" /* yacc.c:1646  */
+#line 82 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[0].value); (yyval.R_Instruction).rt = 0; (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-1].value);}
-#line 1446 "translater.tab.c" /* yacc.c:1646  */
+#line 1477 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 82 "translater.y" /* yacc.c:1646  */
+#line 83 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-3].value);}
-#line 1452 "translater.tab.c" /* yacc.c:1646  */
+#line 1483 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 83 "translater.y" /* yacc.c:1646  */
+#line 84 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = 0; (yyval.R_Instruction).rt = 0; (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[0].value);}
-#line 1458 "translater.tab.c" /* yacc.c:1646  */
+#line 1489 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 84 "translater.y" /* yacc.c:1646  */
+#line 85 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1464 "translater.tab.c" /* yacc.c:1646  */
+#line 1495 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 85 "translater.y" /* yacc.c:1646  */
+#line 86 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1470 "translater.tab.c" /* yacc.c:1646  */
+#line 1501 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 86 "translater.y" /* yacc.c:1646  */
+#line 87 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1476 "translater.tab.c" /* yacc.c:1646  */
+#line 1507 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 87 "translater.y" /* yacc.c:1646  */
+#line 88 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1482 "translater.tab.c" /* yacc.c:1646  */
+#line 1513 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 88 "translater.y" /* yacc.c:1646  */
+#line 89 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL2_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-3].value);}
-#line 1488 "translater.tab.c" /* yacc.c:1646  */
+#line 1519 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 89 "translater.y" /* yacc.c:1646  */
+#line 90 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL2_OPCODE; (yyval.R_Instruction).rd = 0; (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-3].value);}
-#line 1494 "translater.tab.c" /* yacc.c:1646  */
+#line 1525 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 90 "translater.y" /* yacc.c:1646  */
+#line 91 "translater.y" /* yacc.c:1646  */
     {(yyval.R_Instruction).opcode = SPECIAL2_OPCODE; (yyval.R_Instruction).rd = (yyvsp[-4].value); (yyval.R_Instruction).rs = (yyvsp[-2].value); (yyval.R_Instruction).rt = (yyvsp[0].value); (yyval.R_Instruction).shamt = 0; (yyval.R_Instruction).funct = (yyvsp[-5].value);}
-#line 1500 "translater.tab.c" /* yacc.c:1646  */
+#line 1531 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 92 "translater.y" /* yacc.c:1646  */
+#line 93 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rt = (yyvsp[-4].value); (yyval.I_instrucition).rs = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1506 "translater.tab.c" /* yacc.c:1646  */
+#line 1537 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 93 "translater.y" /* yacc.c:1646  */
+#line 94 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rt = (yyvsp[-4].value); (yyval.I_instrucition).rs = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1512 "translater.tab.c" /* yacc.c:1646  */
+#line 1543 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 94 "translater.y" /* yacc.c:1646  */
+#line 95 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-1].value); (yyval.I_instrucition).rs = 0; (yyval.I_instrucition).rt = 0; (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1518 "translater.tab.c" /* yacc.c:1646  */
+#line 1549 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 95 "translater.y" /* yacc.c:1646  */
+#line 96 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rs = (yyvsp[-4].value); (yyval.I_instrucition).rt = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1524 "translater.tab.c" /* yacc.c:1646  */
+#line 1555 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 96 "translater.y" /* yacc.c:1646  */
+#line 97 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rs = (yyvsp[-4].value); (yyval.I_instrucition).rt = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1530 "translater.tab.c" /* yacc.c:1646  */
+#line 1561 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 97 "translater.y" /* yacc.c:1646  */
+#line 98 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-3].value); (yyval.I_instrucition).rs = (yyvsp[-2].value); (yyval.I_instrucition).rt = 0; (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1536 "translater.tab.c" /* yacc.c:1646  */
+#line 1567 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 98 "translater.y" /* yacc.c:1646  */
+#line 99 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-3].value); (yyval.I_instrucition).rs = (yyvsp[-2].value); (yyval.I_instrucition).rt = 0; (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1542 "translater.tab.c" /* yacc.c:1646  */
+#line 1573 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 99 "translater.y" /* yacc.c:1646  */
+#line 100 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rs = (yyvsp[-4].value); (yyval.I_instrucition).rt = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1548 "translater.tab.c" /* yacc.c:1646  */
+#line 1579 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 100 "translater.y" /* yacc.c:1646  */
+#line 101 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-3].value); (yyval.I_instrucition).rs = 0; (yyval.I_instrucition).rt = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1554 "translater.tab.c" /* yacc.c:1646  */
+#line 1585 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 101 "translater.y" /* yacc.c:1646  */
+#line 102 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rt = (yyvsp[-4].value); (yyval.I_instrucition).rs = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1560 "translater.tab.c" /* yacc.c:1646  */
+#line 1591 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 102 "translater.y" /* yacc.c:1646  */
+#line 103 "translater.y" /* yacc.c:1646  */
     {(yyval.I_instrucition).opcode = (yyvsp[-5].value); (yyval.I_instrucition).rt = (yyvsp[-4].value); (yyval.I_instrucition).rs = (yyvsp[-2].value); (yyval.I_instrucition).immediate = (yyvsp[0].value);}
-#line 1566 "translater.tab.c" /* yacc.c:1646  */
+#line 1597 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 104 "translater.y" /* yacc.c:1646  */
+#line 105 "translater.y" /* yacc.c:1646  */
     {(yyval.REGIMM_Instruction).opcode = REGIMM_OPCODE; (yyval.REGIMM_Instruction).rs = (yyvsp[-2].value); (yyval.REGIMM_Instruction).funct = (yyvsp[-3].value); (yyval.REGIMM_Instruction).offset = (yyvsp[0].value);}
-#line 1572 "translater.tab.c" /* yacc.c:1646  */
+#line 1603 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 105 "translater.y" /* yacc.c:1646  */
+#line 106 "translater.y" /* yacc.c:1646  */
     {(yyval.REGIMM_Instruction).opcode = REGIMM_OPCODE; (yyval.REGIMM_Instruction).rs = (yyvsp[-2].value); (yyval.REGIMM_Instruction).funct = (yyvsp[-3].value); (yyval.REGIMM_Instruction).offset = (yyvsp[0].value);}
-#line 1578 "translater.tab.c" /* yacc.c:1646  */
+#line 1609 "translater.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 107 "translater.y" /* yacc.c:1646  */
+#line 108 "translater.y" /* yacc.c:1646  */
     {(yyval.J_Instruction).opcode = (yyvsp[-1].value); (yyval.J_Instruction).target = (yyvsp[0].value);}
-#line 1584 "translater.tab.c" /* yacc.c:1646  */
+#line 1615 "translater.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1588 "translater.tab.c" /* yacc.c:1646  */
+#line 1619 "translater.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1812,16 +1843,15 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 109 "translater.y" /* yacc.c:1906  */
+#line 110 "translater.y" /* yacc.c:1906  */
 
 
 /*Realiza a tradução do arquivo assembly. Gera como saída o arquivo binario output.bin. Foi escrito com Flex & Bison*/
-void translater(char* assembly_file)
-{
+void translater(char* assembly_file) {
     input_assembly = fopen(assembly_file, "r");
     
     if(!input_assembly){
-      printf("Arquivo inexistente.\n");
+      printf("Arquivo '%s' inexistente.\n", assembly_file);
       exit(-1);
     }
 
@@ -1841,7 +1871,7 @@ void translater(char* assembly_file)
     printf("Sucesso na tradução!\n\n");
 }
 
-void yyerror(const char *s) {
+int yyerror(char *s) {
   printf("EEK, parse error! Message: %s\n", s);
   // might as well halt now:
   exit(-1);

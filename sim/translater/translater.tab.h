@@ -91,7 +91,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 17 "translater.y" /* yacc.c:1909  */
+#line 18 "translater.y" /* yacc.c:1909  */
 
   struct R{
     int opcode, rd, rs, rt, shamt, funct;

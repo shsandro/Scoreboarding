@@ -1,4 +1,4 @@
-#include "instructions_queue.h"
+#include "./include/instructions_queue.h"
 #include <stdio.h>
 
 /*Inicializa a fila de instruções da busca*/

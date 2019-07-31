@@ -658,10 +658,10 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "translater.l"
 #line 2 "translater.l"
-#include "util.h"
+#include "./include/util.h"
 #include <stdio.h>
 #include "translater.tab.h"
-#include "hash.h"
+#include "./include/hash.h"
 extern int second_pass;
 extern int instructions_count;
 #line 668 "lex.yy.c"
@@ -1202,7 +1202,7 @@ YY_RULE_SETUP
 case 52:
 YY_RULE_SETUP
 #line 72 "translater.l"
-{ printf("Mystery character %c\n", *yytext); }
+{ printf("Mystery character %c\n", *yytext); exit(-1);}
 	YY_BREAK
 case 53:
 YY_RULE_SETUP

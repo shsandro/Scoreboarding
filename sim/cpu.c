@@ -1,4 +1,4 @@
-#include"cpu.h"
+#include"./include/cpu.h"
 
 int instructions_issued = 0;
 

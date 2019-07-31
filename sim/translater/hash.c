@@ -1,4 +1,4 @@
-#include "hash.h"
+#include "./include/hash.h"
 
 void init_hash(){
     Hash_Table = (Hash*)malloc(sizeof(Hash)*HASH_SIZE);

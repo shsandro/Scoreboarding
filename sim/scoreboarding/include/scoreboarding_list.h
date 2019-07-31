@@ -1,7 +1,7 @@
 #ifndef SCOREBOARDING_LIST_H
 #define SCOREBOARDING_LIST_H
 
-#include "../instructions.h"
+#include "../../include/instructions.h"
 #include <stdlib.h>
 #include <stdbool.h>
 

@@ -1,4 +1,4 @@
-#include "util.h"
+#include "./include/util.h"
 
 /*Retorna o número de um registrador*/
 int get_register(char c, char i){

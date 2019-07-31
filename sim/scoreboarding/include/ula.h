@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "../instructions.h"
+#include "../../include/instructions.h"
 
 #define BUSY true
 #define FREE false

@@ -1,8 +1,8 @@
 %{
-#include "util.h"
+#include "./include/util.h"
 #include <stdio.h>
 #include "translater.tab.h"
-#include "hash.h"
+#include "./include/hash.h"
 extern int second_pass;
 extern int instructions_count;
 %}
@@ -69,6 +69,6 @@ extern int instructions_count;
 
 [ \t]
 
-. { printf("Mystery character %c\n", *yytext); }
+. { printf("Mystery character %c\n", *yytext); exit(-1);}
 
 %%

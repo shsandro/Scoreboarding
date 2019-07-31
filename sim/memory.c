@@ -1,4 +1,5 @@
-#include "memory.h"
+#include "./include/memory.h"
+
 int num_instructions;
 int finish_PC;
 

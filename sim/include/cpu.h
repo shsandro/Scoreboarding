@@ -7,7 +7,7 @@
 #include "registers.h"
 #include "memory.h"
 #include "sim.h"
-#include "./scoreboarding/scoreboarding.h"
+#include "../scoreboarding/include/scoreboarding.h"
 
 int instructions_issued;
 void fetch_stage();

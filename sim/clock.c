@@ -1,5 +1,4 @@
-#include "clock.h"
-#include "registers.h"
+#include "./include/clock.h"
 
 /*Inicializa o clock*/
 void initialize_clock(){
