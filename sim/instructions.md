@@ -15,7 +15,7 @@
     - Formato: B offset
     - Tradução: 000100 00000 00000 offset
     - Final: 000100 00000 00000 XXXXXXXXXXXXXXXX
-    - Significado: PC += offset
+    - Significado: PC += offse
 
 - BEQ
     - Formato: BEQ rs, rt, offset
