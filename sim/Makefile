@@ -12,7 +12,7 @@ C: main
 	@rm -f */*.out
 
 main: T 
-	$(CXX) $(CXXFLAGS) sim.c run.c memory.c registers.c clock.c cpu.c instructions_queue.c $(SCORE_SOURCES) $(TRAD_SOURCES) -o mips32sim
+	$(CXX) $(CXXFLAGS) sim.c memory.c registers.c clock.c cpu.c instructions_queue.c $(SCORE_SOURCES) $(TRAD_SOURCES) -o mips32sim
 	@echo "Sucesso na compilação!"
 
 T:

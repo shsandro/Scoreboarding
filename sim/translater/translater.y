@@ -118,7 +118,7 @@ void translater(char* assembly_file) {
       exit(-1);
     }
 
-    output = fopen("output.bin", "wr+");
+    output = fopen("./output/output.bin", "wr+");
 
     init_hash();
     yyin = input_assembly;

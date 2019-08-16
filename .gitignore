@@ -2,3 +2,5 @@
 /sim/.vscode
 mips32sim
 *.bin
+*.out
+*.s
