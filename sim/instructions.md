@@ -1,7 +1,4 @@
-﻿    # Implementar um tradutor de Assembly para binário
-
-
-## Conjunto de instruções
+﻿## Conjunto de instruções
 - ADDI
     - Formato: ADDI rt, rs, immediate
     - Tradução 001000 rs rt immediate
