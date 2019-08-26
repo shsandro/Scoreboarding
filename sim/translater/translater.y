@@ -57,7 +57,7 @@ int second_pass = 0;
 all: 
     | all instruction eol {printf("cai em: all instruction eol\n");}
     | all LABEL eol {printf("cai em: all LBAEL eol\n");}
-    | all eol {printf("cai em: all eol\n");}
+    | all eol {getchar();printf("cai em: all eol\n");}
 
 comma:
      | COMMA {printf("cai em: COMMA\n");}

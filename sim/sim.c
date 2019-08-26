@@ -122,7 +122,7 @@ void run(char *argv){
 /*Printa ajuda*/
 void help(){
    printf("\n\n-i: arquivo assembly contendo programa a ser simulado\n-h | --help: ajuda\n-o: arquivo de saída contendo programa convertido para binário\n\nRODE './mips32sim -i <arquivo assembly> [-o <arquivo saída>] [-h]' PARA EXECUÇÃO COMPLETA.\n\n");
-   printf("Caso o arquivo de saída não seja especificado, o arquivo binário estará em './output/output.bin'\n");
+   printf("Caso o arquivo de saída não seja especificado, o arquivo binário estará em './output/output.bin' e o arquivo de insformações em './output/output.out'\n");
 }
 
 /*Verifica se possui arquivo de saída especificado*/

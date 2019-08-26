@@ -1,4 +1,4 @@
-addi $t0, $zero, 0x6
+addi $t0, $zero, 0x5
 addi $t1, $zero, 0x1
 addi $t2, $zero, 0x2
 addi $t3, $zero, 0x0

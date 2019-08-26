@@ -39,6 +39,7 @@ void clear_list(Instruction* instruction){
             free(scoreboarding_list.list[i]);
             scoreboarding_list.list[i] = NULL;
             scoreboarding_list.num_instructions--;
+            ISSUED = true;
         }
     }
 }
@@ -80,6 +81,7 @@ void scoreboarding(){
     for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
         if (scoreboarding_list.list[i] == NULL) continue;
         printf("\nInstrução: %d Estagio: %d\t", scoreboarding_list.list[i]->opcode, scoreboarding_list.list[i]->stage);
+        printf("\nPC = %d", PC.data);
     }
     printf("\n");
 
@@ -153,7 +155,11 @@ int wait(int functional_unit, int destiny){
                     registers[destiny].fu = UF_SUB;
                     return UF_SUB;
                 }
-            } else if (functional_units[UF_SUB].busy || registers[destiny].fu != NONE) return UNAVAILABLE; 
+            } else if (functional_units[UF_SUB].busy || registers[destiny].fu != NONE) {
+                if (functional_units[UF_SUB].busy) printf("\n problema na UF");
+                else printf("\nproblema no reg");
+                printf("\n uf reg %d", registers[destiny].fu);
+                return UNAVAILABLE;} 
             functional_units[UF_SUB].busy = true;
             registers[destiny].fu = UF_SUB;
             return UF_SUB;
@@ -175,6 +181,7 @@ int wait(int functional_unit, int destiny){
 
 /*Realiza a emissão de uma instrução dentro do scoreboarding e em seguida a manda para a leitura de operandos*/
 void issue(Instruction* instruction){
+    printf("\n %d", instruction->r_instruction.funct);
     int available_functional_unit;
     switch (instruction->opcode){
         case SPECIAL2:
@@ -520,6 +527,7 @@ void issue(Instruction* instruction){
                     functional_units[instruction->functional_unit].Rk = (registers[instruction->i_instruction.rt].fu == NONE)? true : false;
                     break;
                 case I_BGTZ:
+                    printf("\n fazendo bgtz");
                     available_functional_unit = wait(instruction->functional_unit, REGISTER_PC);
                     if (available_functional_unit == UNAVAILABLE) return;
                     instruction->functional_unit = available_functional_unit;
@@ -610,18 +618,18 @@ void issue(Instruction* instruction){
 void read_operands(Instruction* instruction){
     //Se vou ler do registrador que estou escrevendo, vai para o read_default
     if (functional_units[instruction->functional_unit].Fj != NONE && functional_units[instruction->functional_unit].Fk != NONE){
-    if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi && functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
-    else if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi){
-        if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
-    } else if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi){
-        if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
-    } else if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+        if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi && functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
+        else if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi){
+            if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+        } else if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi){
+            if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
+        } else if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE || registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     } else if (functional_units[instruction->functional_unit].Fj != NONE){
-    if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi) goto read_default;
-    if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
+        if (functional_units[instruction->functional_unit].Fj == functional_units[instruction->functional_unit].Fi) goto read_default;
+        if (registers[functional_units[instruction->functional_unit].Fj].fu != NONE) return;
     } else if (functional_units[instruction->functional_unit].Fk != NONE){
-    if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
-    if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
+        if (functional_units[instruction->functional_unit].Fk == functional_units[instruction->functional_unit].Fi) goto read_default;
+        if (registers[functional_units[instruction->functional_unit].Fk].fu != NONE) return;
     }
     read_default:
     functional_units[instruction->functional_unit].Rj = true;
@@ -905,6 +913,9 @@ void execute(Instruction* instruction){
                     ++branches_taken;
                      if (functional_units[instruction->functional_unit].Vj <= 0){//salto é tomado se maior que zero. Se é menor ou igual devo arrumar PC
                         PC.data = adder(AR.data, 0);
+                        // printf("\nAR DO SALTO = %d", AR.data);
+                        // printf("\nPC DO SALTO = %d", PC.data);
+                        // exit(-1);
                         clear_queue();
                         clear_list(instruction);
                         ++branches_miss;

@@ -1376,7 +1376,7 @@ yyreduce:
 
   case 5:
 #line 60 "translater.y" /* yacc.c:1646  */
-    {printf("cai em: all eol\n");}
+    {getchar();printf("cai em: all eol\n");}
 #line 1381 "translater.tab.c" /* yacc.c:1646  */
     break;
 

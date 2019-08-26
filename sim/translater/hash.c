@@ -16,7 +16,7 @@ unsigned int hash(char* key){
 
 int insert_label(char* key, int data){
     key[strlen(key) - 1] = '\0';
-    if (Hash_Table[hash(key)].data != NONE) return 0;
+    if (Hash_Table[hash(key)].data != NONE) exit(EXIT_FAILURE);
     Hash_Table[hash(key)].key = key;
     Hash_Table[hash(key)].data = data;
 }
