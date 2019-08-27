@@ -23,7 +23,7 @@ extern int instructions_count;
 [B|b][E|e][Q|q][L|l] {yylval.value = 0b010100; return BEQL_TOKEN;}
 [B|b][G|g][T|t][Z|z] {yylval.value = 0b000111;return BGTZ_TOKEN;}
 [B|b][L|l][E|e][Z|z] {yylval.value = 0b000110;return BLEZ_TOKEN;}
-[B|b][N|n][E|e] {yylval.value = 0b000101; printf("cheguei no bne\n"); return BNE_TOKEN;}
+[B|b][N|n][E|e] {yylval.value = 0b000101; return BNE_TOKEN;}
 [L|l][U|u][I|i] {yylval.value = 0b001111; return LUI_TOKEN;}
 [O|o][R|r][I|i] {yylval.value = 0b001101; return ORI_TOKEN;}
 [X|x][O|o][R|r][I|i] {yylval.value = 0b001110; return XORI_TOKEN;}

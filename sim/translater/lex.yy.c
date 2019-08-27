@@ -1007,7 +1007,7 @@ YY_RULE_SETUP
 case 13:
 YY_RULE_SETUP
 #line 26 "translater.l"
-{yylval.value = 0b000101; printf("cheguei no bne\n"); return BNE_TOKEN;}
+{yylval.value = 0b000101; return BNE_TOKEN;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
