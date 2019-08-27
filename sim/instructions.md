@@ -15,7 +15,7 @@
     - Formato: B offset
     - Tradução: 000100 00000 00000 offset
     - Final: 000100 00000 00000 XXXXXXXXXXXXXXXX
-    - Significado: PC += offse
+    - Significado: PC += offset
 
 - BEQ
     - Formato: BEQ rs, rt, offset
@@ -66,7 +66,7 @@
     - Significado: rt = rs | zero_extend(immediate)
 
 - XORI
-    - Formato: XOR rs, rt, immediate
+    - Formato: XORI rs, rt, immediate
     - Tradução: 001110 rs rt immediate
     - Final: 001110 XXXXX XXXXX XXXXXXXXXXXXXXXX
      - Significado: rt = rs XOR zero_extend(immediate)

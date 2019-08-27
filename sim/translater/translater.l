@@ -63,8 +63,8 @@ extern int instructions_count;
 "$fp" { yylval.value = 30; return REGISTER; }
 "$ra" { yylval.value = 31; return REGISTER; }
 
-[a-zA-Z_][a-zA-Z0-9_]* { if(second_pass){yylval.value = get_data(strdup(yytext)); printf("Endereço: %d\n", yylval.value); return LABEL; }else{yylval.value = 0; return LABEL;}}
-[a-zA-Z_][a-zA-Z0-9_]*[:] { if(!second_pass){insert_label(strdup(yytext), (instructions_count)*4);printf("achei label %s\n", yytext);} return LABEL;}
+[a-zA-Z_][a-zA-Z0-9_]* { if(second_pass){yylval.value = get_data(strdup(yytext)); return LABEL; }else{yylval.value = 0; return LABEL;}}
+[a-zA-Z_][a-zA-Z0-9_]*[:] { if(!second_pass){insert_label(strdup(yytext), (instructions_count)*4);} return LABEL;}
 0[xX][0-9a-fA-F]+ { yylval.value = (int)strtol(yytext, NULL, 0); return IMMEDIATE; }
 
 [ \t]

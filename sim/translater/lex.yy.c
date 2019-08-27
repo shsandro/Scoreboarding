@@ -1182,12 +1182,12 @@ YY_RULE_SETUP
 case 48:
 YY_RULE_SETUP
 #line 66 "translater.l"
-{ if(second_pass){yylval.value = get_data(strdup(yytext)); printf("Endereço: %d\n", yylval.value); return LABEL; }else{yylval.value = 0; return LABEL;}}
+{ if(second_pass){yylval.value = get_data(strdup(yytext)); return LABEL; }else{yylval.value = 0; return LABEL;}}
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
 #line 67 "translater.l"
-{ if(!second_pass){insert_label(strdup(yytext), (instructions_count)*4);printf("achei label %s\n", yytext);} return LABEL;}
+{ if(!second_pass){insert_label(strdup(yytext), (instructions_count)*4);} return LABEL;}
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
