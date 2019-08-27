@@ -15,52 +15,6 @@ void initialize_simulator(){
    fclose(output);
 }
 
-// char *str_replace(char *orig, char *rep, char *with) {
-//     char *result; // the return string
-//     char *ins;    // the next insert point
-//     char *tmp;    // varies
-//     int len_rep;  // length of rep (the string to remove)
-//     int len_with; // length of with (the string to replace rep with)
-//     int len_front; // distance between rep and end of last rep
-//     int count;    // number of replacements
-
-//     // sanity checks and initialization
-//     if (!orig || !rep)
-//         return NULL;
-//     len_rep = strlen(rep);
-//     if (len_rep == 0)
-//         return NULL; // empty rep causes infinite loop during count
-//     if (!with)
-//         with = "";
-//     len_with = strlen(with);
-
-//     // count the number of replacements needed
-//     ins = orig;
-//     for (count = 0; tmp = strstr(ins, rep); ++count) {
-//         ins = tmp + len_rep;
-//     }
-
-//     tmp = result = malloc(strlen(orig) + (len_with - len_rep) * count + 1);
-
-//     if (!result)
-//         return NULL;
-
-//     // first time through the loop, all the variable are set correctly
-//     // from here on,
-//     //    tmp points to the end of the result string
-//     //    ins points to the next occurrence of rep in orig
-//     //    orig points to the remainder of orig after "end of rep"
-//     while (count--) {
-//         ins = strstr(orig, rep);
-//         len_front = ins - orig;
-//         tmp = strncpy(tmp, orig, len_front) + len_front;
-//         tmp = strcpy(tmp, with) + len_with;
-//         orig += len_front + len_rep; // move to next "end of rep"
-//     }
-//     strcpy(tmp, orig);
-//     return result;
-// }
-
 /*Copia arquivo assembly para output.out*/
 void copy_file(char* file_name, FILE* target){
    input_assembly = fopen(file_name, "r");
@@ -87,6 +41,28 @@ void write_binary(){
    fclose(output);
 }
 
+/*Escreve no arquivo de saída previsão de desvio e demais informações*/
+void write_stats(FILE *target){
+   float branches_hit_percent = ((float)branches_hit/(float)branches_taken)*100;
+   float branches_miss_percent = ((float)branches_miss/(float)branches_taken)*100;
+   float instructions_issued_percent = ((float)instructions_written/(float)instructions_issued)*100;
+
+   fprintf(target, "\nPrevisão:\n \tTotal de saltos: %d\n \tAcertos: %d (%.2f%)\n \tErros: %d (%.2f%)\n", branches_taken, branches_hit, branches_hit_percent, branches_miss, branches_miss_percent);
+   fprintf(target, "\nCiclos:\n \t%d ciclos\n", get_clock());
+   fprintf(target, "\nInstruções:\n \tEmitidas: %d\n \tEfetivadas: %d (%.2f%)\n", instructions_issued, instructions_written, instructions_issued_percent);
+}
+
+/*Escreve informações sobre os registradores no arquivo de saída*/
+void write_registers(FILE* target){
+   fprintf(target, "\nRegistradores:\n");
+   int i = 0;
+   while (i < 33) {
+      fprintf(target, "\tRegister %d -> %d \tRegister %d -> %d \tRegister %d -> %d\n", i, registers[i].data, i+1, registers[i+1].data, i+2, registers[i+2].data);
+      i += 3;
+   }
+   fprintf(target, "\tRegister %d -> %d", 33, registers[33].data);
+}
+
 /*Roda o pipeline*/
 void run(char *argv){
    translater(argv);
@@ -102,20 +78,15 @@ void run(char *argv){
    execution_stage();
    fetch_stage();
    increase_clock();
-   print_registers();
-   printf("\n Instruções emitidas => %d, instruções efetivadas => %d", instructions_issued, instructions_written);
-   printf("\n Total saltos => %d, saltos acertados => %d, saltos errados => %d", branches_taken, branches_hit, branches_miss);
-   printf("\nCiclo: %d PC: %d\n", get_clock(), PC.data);
+   // print_registers();
+   // printf("\n Instruções emitidas => %d, instruções efetivadas => %d", instructions_issued, instructions_written);
+   // printf("\n Total saltos => %d, saltos acertados => %d, saltos errados => %d", branches_taken, branches_hit, branches_miss);
+   // printf("\nCiclo: %d PC: %d\n", get_clock(), PC.data);
    // getchar();
    } while(get_status_queue() == NOT_EMPTY || get_status_list() == NOT_EMPTY);
 
-   float branches_hit_percent = ((float)branches_hit/(float)branches_taken)*100;
-   float branches_miss_percent = ((float)branches_miss/(float)branches_taken)*100;
-   float instructions_issued_percent = ((float)instructions_written/(float)instructions_issued)*100;
-
-   fprintf(out_stats, "\nPrevisão:\n \tTotal de saltos: %d\n \tAcertos: %d (%.2f%)\n \tErros: %d (%.2f%)\n", branches_taken, branches_hit, branches_hit_percent, branches_miss, branches_miss_percent);
-   fprintf(out_stats, "\nCiclos:\n \t%d ciclos\n", get_clock());
-   fprintf(out_stats, "\nInstruções:\n \tEmitidas: %d\n \tEfetivadas: %d (%.2f%)\n", instructions_issued, instructions_written, instructions_issued_percent);
+   write_stats(out_stats);
+   write_registers(out_stats);
    fclose(out_stats);
 }
 
@@ -150,7 +121,7 @@ int main(int argc, char **argv){
       else if(strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0) help();
       else if(strcmp(argv[i], "-o") == 0) ++i; //Verifico o arquivo de saída apenas depois
       else{
-         printf("\nPARÂMETRO DESCONHECIDO.\n");
+         printf("\nPARÂMETRO DESCONHECIDO <%s>\n", argv[i]);
          help();
          exit(EXIT_FAILURE);
       }
@@ -160,9 +131,6 @@ int main(int argc, char **argv){
    //Se um nome de arquivo de saída é passado, renomeio ele
    int output = check_output(argc, argv);
    if(output){
-      // char new_name[80];
-      // strcpy(new_name, "./output/");
-      // strcat(new_name, argv[output]);
       rename("./output/output.bin", argv[output]);
 
       argv[output][(strlen(argv[output])-1)] = '\0';

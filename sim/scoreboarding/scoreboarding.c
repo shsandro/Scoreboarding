@@ -77,13 +77,13 @@ void scoreboarding(){
         insert_scoreboardig(instruction);
     }
 
-    printf("\n--------------SCOREBOARDING -----------------");
-    for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
-        if (scoreboarding_list.list[i] == NULL) continue;
-        printf("\nInstrução: %d Estagio: %d\t", scoreboarding_list.list[i]->opcode, scoreboarding_list.list[i]->stage);
-        printf("\nPC = %d", PC.data);
-    }
-    printf("\n");
+    // printf("\n--------------SCOREBOARDING -----------------");
+    // for (int i = 0; i < scoreboarding_list.max_instructions; ++i){
+        // if (scoreboarding_list.list[i] == NULL) continue;
+        // printf("\nInstrução: %d Estagio: %d\t", scoreboarding_list.list[i]->opcode, scoreboarding_list.list[i]->stage);
+        // printf("\nPC = %d", PC.data);
+    // }
+    // printf("\n");
 
     run_scoreboarding();
 }
@@ -155,11 +155,8 @@ int wait(int functional_unit, int destiny){
                     registers[destiny].fu = UF_SUB;
                     return UF_SUB;
                 }
-            } else if (functional_units[UF_SUB].busy || registers[destiny].fu != NONE) {
-                if (functional_units[UF_SUB].busy) printf("\n problema na UF");
-                else printf("\nproblema no reg");
-                printf("\n uf reg %d", registers[destiny].fu);
-                return UNAVAILABLE;} 
+            } else if (functional_units[UF_SUB].busy || registers[destiny].fu != NONE) return UNAVAILABLE;
+             
             functional_units[UF_SUB].busy = true;
             registers[destiny].fu = UF_SUB;
             return UF_SUB;
@@ -972,18 +969,6 @@ void execute(Instruction* instruction){
     // bypass(functional_units[instruction->functional_unit].Fi, functional_units[instruction->functional_unit].result[0]);
     instruction->stage = WRITE_BACK;
 }
-
-// bool check_WAR(Instruction* instruction){
-//     for (int i = 0; i < scoreboarding_list.max_instructions ; ++i){
-//         if (scoreboarding_list.list[i] == NULL) continue;
-//         switch (scoreboarding_list.list[i]->stage) {
-//         case ISSUE:
-//         case READ_OPERANDS:
-//             if(functional_units[instruction->functional_unit].Fi == functional_units[scoreboarding_list.list[i]->functional_unit].Fj || functional_units[instruction->functional_unit].Fi == functional_units[scoreboarding_list.list[i]->functional_unit].Fk) return true;
-//         }
-//     }
-//     return false;
-// }
 
 /*Realiza a escrita da instrução no registrador destino e libera o registrador e a UF*/
 void write_back(Instruction* instruction){

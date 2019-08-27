@@ -3,7 +3,7 @@ SCORE=./scoreboarding/
 TRAD_SOURCES=$(TRAD)*.c -lfl
 SCORE_SOURCES=$(SCORE)*.c
 CXX=gcc
-CXXFLAGS=-W
+CXXFLAGS=-w
 
 all: C
 

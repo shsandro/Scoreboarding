@@ -1,10 +1,11 @@
-addi $t0, $zero, 0x5
-addi $t1, $zero, 0x0
+addi $t0, $zero, 0x3    # fetch termo de fibonacci
+addi $t1, $zero, 0x1
+addi $a0, $zero, 0x1
+beq $t0, $t1, end
 add $a0, $zero, $zero
 add $a1, $zero, $zero
 addi $a2, $zero, 0x1
 beq $t0, $zero, end
-div $t0, $a2
 loop:
 addi $t1, $t1, 0x1
 add $a0, $a1, $a2
