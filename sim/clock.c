@@ -11,10 +11,6 @@ void increase_clock(){
     ++clock;
 }
 
-void end_clock(){
-    finish_clock = 1;
-}
-
 /*Retorna o valor atual do clock*/
 int get_clock(){
     return clock;
