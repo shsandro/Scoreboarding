@@ -2,6 +2,8 @@
 
 Simulador de arquitetura MIPS32 desenvolvido como trabalho da disciplina de Arquitetura e Organização de Computadores II.
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 ## Dependências
 
 As dependêcias do simulador são:
